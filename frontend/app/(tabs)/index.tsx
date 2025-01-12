@@ -1,10 +1,13 @@
-import { Image, StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+
+import { Image, StyleSheet, FlatList, TouchableOpacity, View, Button, Modal } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
 
 // define competition interface 
 interface Competition {
@@ -66,8 +69,11 @@ export default function HomeScreen() {
         data={COMPETITIONS}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderCompetitionItem}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 2, paddingVertical: 8 }}
       />
+
+      {/* create new competition button */}
+      <CompetitionCreationModal />
     </ParallaxScrollView>
   );
 }
@@ -110,5 +116,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff',
   },
 });
