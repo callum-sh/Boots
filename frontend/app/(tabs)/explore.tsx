@@ -19,7 +19,7 @@ export default function TabTwoScreen() {
           style={styles.headerImage}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
+      {/* <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Explore</ThemedText>
       </ThemedView>
       <ThemedText>This app includes example code to help you get started.</ThemedText>
@@ -90,7 +90,7 @@ export default function TabTwoScreen() {
             </ThemedText>
           ),
         })}
-      </Collapsible>
+      </Collapsible> */}
     </ParallaxScrollView>
   );
 }
