@@ -1,34 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Image, StyleSheet, FlatList, TouchableOpacity, View, Button, Modal } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '@/types/navigation';
+import { Competition, RootStackParamList } from './types';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
+import { Tune } from '@mui/icons-material';
+import { router } from 'expo-router';
 
-// define competition interface 
-interface Competition {
-  id: number;
-  name: string;
-  startDate: string;
-  endDate: string;
-}
+// TODO: get from env vars 
+const BACKEND_URL = 'http://localhost:8000';
+const DEBUG = true;
 
-// TODO: get from backend API
-const COMPETITIONS = [
-  { id: 1, name: 'Boots with Buddies', startDate: '2025-01-01', endDate: '2025-01-20'},
-  { id: 2, name: 'Collaboration Competition', startDate: '2024-12-01', endDate: '2025-02-01'},
-  { id: 3, name: 'JavaScript Marathon', startDate: '2025-01-01', endDate: '2025-01-07'},
-];
 export default function HomeScreen() {
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  // fetch data needed to render page 
+  useEffect(() => {
+    fetchUserCompetitions();
+  }, []);
+
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const handlePress = (competition: Competition) => {
+  async function fetchUserCompetitions() {
+    // fetch user's competitions from the backend
+    try {
+      const response = await fetch(`${BACKEND_URL}/competition`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      const competitionData = await response.json();
+      setCompetitions(competitionData);
+      if (DEBUG) {
+        console.log(`[debug] fetched competitions: ${JSON.stringify(competitionData)}`);
+      }
+    } catch (error) {
+      console.error(`[error] failed to fetch competitions: ${error}`);
+    }
+  }
+
+  const handlePress = (competition: Competition) => () => {
+    console.log('Navigating to:', competition.name);
     // Navigate to the details screen and pass competition data as params
-    navigation.navigate('CompetitionDetails', { competition });
+    const id = competition.id;
+
+    router.push({
+      pathname: '/competitionDetails/[id]',
+      params: { id },
+    });
   };
 
   const calculateProgress = (startDate: string, endDate: string) => {
@@ -41,7 +65,7 @@ export default function HomeScreen() {
   const renderCompetitionItem = ({ item }: { item: Competition }) => {
     const progress = calculateProgress(item.startDate, item.endDate);
     return (
-      <TouchableOpacity onPress={() => handlePress(item)} style={styles.itemContainer}>
+      <TouchableOpacity onPress={handlePress(item)} style={styles.itemContainer}>
         <ThemedText>{item.name}</ThemedText>
         <View style={styles.progressBarContainer}>
           <View style={[styles.progressBar, { width: `${progress}%` }]} />
@@ -64,15 +88,19 @@ export default function HomeScreen() {
         <ThemedText type="title">Ongoing Competitions</ThemedText>
       </ThemedView>
 
-      {/* Render your competitions in a list */}
-      <FlatList
-        data={COMPETITIONS}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderCompetitionItem}
-        contentContainerStyle={{ paddingHorizontal: 2, paddingVertical: 8 }}
-      />
+      {
+        competitions.length > 0 ? (
+          <FlatList
+            data={competitions}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderCompetitionItem}
+            contentContainerStyle={{ paddingHorizontal: 2, paddingVertical: 8 }}
+          />
+        ) : (
+          <ThemedText>No competitions found</ThemedText>
+        )
+      }
 
-      {/* create new competition button */}
       <CompetitionCreationModal />
     </ParallaxScrollView>
   );
