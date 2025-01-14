@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Image, StyleSheet, FlatList, TouchableOpacity, View, Button, Modal } from 'react-native';
+import { Image, StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation';
 
@@ -8,22 +8,21 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
-import { Tune } from '@mui/icons-material';
+
+import { BACKEND_URL, DEBUG } from '@/constants/env';
 
 // define competition interface 
-interface Competition {
+export interface ICompetition {
   id: number;
   name: string;
-  startDate: string;
-  endDate: string;
+  description: string;
+  start_date: string;
+  end_date: string;
 }
 
-// TODO: get from env vars 
-const BACKEND_URL = 'http://localhost:8000';
-const DEBUG = true;
 
 export default function HomeScreen() {
-  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [competitions, setCompetitions] = useState<ICompetition[]>([]);
 
   // fetch data needed to render page 
   useEffect(() => {
@@ -54,7 +53,7 @@ export default function HomeScreen() {
     }
   }
 
-  const handlePress = (competition: Competition) => {
+  const handlePress = (competition: ICompetition) => {
     // Navigate to the details screen and pass competition data as params
     navigation.navigate('CompetitionDetails', { competition });
   };
@@ -66,7 +65,7 @@ export default function HomeScreen() {
     return ((now - start) / (end - start)) * 100;
   };
 
-  const renderCompetitionItem = ({ item }: { item: Competition }) => {
+  const renderCompetitionItem = ({ item }: { item: ICompetition }) => {
     const progress = calculateProgress(item.startDate, item.endDate);
     return (
       <TouchableOpacity onPress={() => handlePress(item)} style={styles.itemContainer}>
