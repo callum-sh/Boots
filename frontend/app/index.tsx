@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Image, StyleSheet, FlatList, TouchableOpacity, View, Button, Modal } from 'react-native';
+import { Image, StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Competition, RootStackParamList } from './types';
 
@@ -8,7 +8,6 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
-import { Tune } from '@mui/icons-material';
 import { router } from 'expo-router';
 
 // TODO: get from env vars 

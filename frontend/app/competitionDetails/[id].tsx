@@ -1,4 +1,4 @@
-import { Button, Image, StyleSheet, Platform, Share } from 'react-native';
+import { Button, Image, StyleSheet, Share } from 'react-native';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
