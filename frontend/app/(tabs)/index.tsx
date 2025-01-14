@@ -22,12 +22,6 @@ interface Competition {
 const BACKEND_URL = 'http://localhost:8000';
 const DEBUG = true;
 
-// TODO: get from backend API
-const COMPETITIONS = [
-  { id: 1, name: 'Boots with Buddies', startDate: '2025-01-01', endDate: '2025-01-20'},
-  { id: 2, name: 'Collaboration Competition', startDate: '2024-12-01', endDate: '2025-02-01'},
-  { id: 3, name: 'JavaScript Marathon', startDate: '2025-01-01', endDate: '2025-01-07'},
-];
 export default function HomeScreen() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
 
@@ -53,7 +47,7 @@ export default function HomeScreen() {
       setCompetitions(competitionData);
 
       if (DEBUG) {
-        console.log(`[debug] fetched competitions: ${JSON.stringify(data)}`);
+        console.log(`[debug] fetched competitions: ${JSON.stringify(competitionData)}`);
       }
     } catch (error) {
       console.error(`[error] failed to fetch competitions: ${error}`);
