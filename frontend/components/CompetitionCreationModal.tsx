@@ -35,15 +35,17 @@ export function CompetitionCreationModal() {
   
   const handleCreateCompetition = async () => {
     try {
-      await fetch(`${BACKEND_URL}/competition/`, {
+      const response = await fetch(`${BACKEND_URL}/competition/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(competitionFormData),
       });
-      if (DEBUG) {
-        console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+      if (response.ok) {
+        if (DEBUG) {
+          console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+        }
       }
     } catch (error) {
       console.error(`[error] failed to create competition: ${error}`);
