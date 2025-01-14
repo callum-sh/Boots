@@ -39,6 +39,8 @@ class ParticipantViewSet(viewsets.ViewSet):
 class CompetitionViewSet(viewsets.ModelViewSet):
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
+    # no permissions needed
+    permission_classes = []
 
 class CategoryViewSet(viewsets.ViewSet):
     queryset = Category.objects.all()

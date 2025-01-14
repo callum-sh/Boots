@@ -2,20 +2,18 @@ import React, { useEffect, useState } from 'react';
 
 import { Image, StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { Competition, RootStackParamList } from './types';
+import { ICompetition, RootStackParamList } from './types';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
 import { router } from 'expo-router';
-
-// TODO: get from env vars 
-const BACKEND_URL = 'http://localhost:8000';
-const DEBUG = true;
+import { BACKEND_URL, DEBUG } from '@/constants/env';
 
 export default function HomeScreen() {
-  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [competitions, setCompetitions] = useState<ICompetition[]>([]);
+
   // fetch data needed to render page 
   useEffect(() => {
     fetchUserCompetitions();
@@ -34,7 +32,9 @@ export default function HomeScreen() {
       });
       
       const competitionData = await response.json();
+
       setCompetitions(competitionData);
+
       if (DEBUG) {
         console.log(`[debug] fetched competitions: ${JSON.stringify(competitionData)}`);
       }
@@ -43,8 +43,7 @@ export default function HomeScreen() {
     }
   }
 
-  const handlePress = (competition: Competition) => () => {
-    console.log('Navigating to:', competition.name);
+  const handlePress = (competition: ICompetition) => {
     // Navigate to the details screen and pass competition data as params
     const id = competition.id;
 
@@ -61,10 +60,10 @@ export default function HomeScreen() {
     return ((now - start) / (end - start)) * 100;
   };
 
-  const renderCompetitionItem = ({ item }: { item: Competition }) => {
-    const progress = calculateProgress(item.startDate, item.endDate);
+  const renderCompetitionItem = ({ item }: { item: ICompetition }) => {
+    const progress = calculateProgress(item.start_date, item.end_date);
     return (
-      <TouchableOpacity onPress={handlePress(item)} style={styles.itemContainer}>
+      <TouchableOpacity onPress={() => handlePress(item)} style={styles.itemContainer}>
         <ThemedText>{item.name}</ThemedText>
         <View style={styles.progressBarContainer}>
           <View style={[styles.progressBar, { width: `${progress}%` }]} />
