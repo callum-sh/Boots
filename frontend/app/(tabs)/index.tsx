@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Image, StyleSheet, FlatList, TouchableOpacity, View, Button, Modal } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
@@ -8,6 +8,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
+import { Tune } from '@mui/icons-material';
 
 // define competition interface 
 interface Competition {
@@ -17,6 +18,10 @@ interface Competition {
   endDate: string;
 }
 
+// TODO: get from env vars 
+const BACKEND_URL = 'http://localhost:8000';
+const DEBUG = true;
+
 // TODO: get from backend API
 const COMPETITIONS = [
   { id: 1, name: 'Boots with Buddies', startDate: '2025-01-01', endDate: '2025-01-20'},
@@ -24,7 +29,36 @@ const COMPETITIONS = [
   { id: 3, name: 'JavaScript Marathon', startDate: '2025-01-01', endDate: '2025-01-07'},
 ];
 export default function HomeScreen() {
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+
+  // fetch data needed to render page 
+  useEffect(() => {
+    fetchUserCompetitions();
+  }, []);
+
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  async function fetchUserCompetitions() {
+    // fetch user's competitions from the backend
+    try {
+      const response = await fetch(`${BACKEND_URL}/competition`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      const competitionData = await response.json();
+
+      setCompetitions(competitionData);
+
+      if (DEBUG) {
+        console.log(`[debug] fetched competitions: ${JSON.stringify(data)}`);
+      }
+    } catch (error) {
+      console.error(`[error] failed to fetch competitions: ${error}`);
+    }
+  }
 
   const handlePress = (competition: Competition) => {
     // Navigate to the details screen and pass competition data as params
@@ -64,15 +98,19 @@ export default function HomeScreen() {
         <ThemedText type="title">Ongoing Competitions</ThemedText>
       </ThemedView>
 
-      {/* Render your competitions in a list */}
-      <FlatList
-        data={COMPETITIONS}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderCompetitionItem}
-        contentContainerStyle={{ paddingHorizontal: 2, paddingVertical: 8 }}
-      />
+      {
+        competitions.length > 0 ? (
+          <FlatList
+            data={competitions}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderCompetitionItem}
+            contentContainerStyle={{ paddingHorizontal: 2, paddingVertical: 8 }}
+          />
+        ) : (
+          <ThemedText>No competitions found</ThemedText>
+        )
+      }
 
-      {/* create new competition button */}
       <CompetitionCreationModal />
     </ParallaxScrollView>
   );
