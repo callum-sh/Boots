@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal, StyleSheet, View, TextInput } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import { ICompetition } from '@/app/(tabs)';
+import { ICompetition } from '@/app/types';
 import { BACKEND_URL, DEBUG } from '@/constants/env';
 
 export function CompetitionCreationModal() {
