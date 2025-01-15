@@ -39,16 +39,16 @@ class ParticipantViewSet(viewsets.ViewSet):
 class CompetitionViewSet(viewsets.ModelViewSet):
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
-    # no permissions needed
+    # TODO: no permissions needed rn; must add
     permission_classes = []
 
 class CategoryViewSet(viewsets.ViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [] # TODO 
 
     def list(self, request):
-        queryset = self.queryset.filter(competition__participants__user=request.user)
-        serializer = self.serializer_class(queryset, many=True)
+        serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data)
     
     def create(self, request):

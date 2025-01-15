@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal, StyleSheet, View, TextInput } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import { ICompetition } from '@/app/(tabs)';
+import { ICompetition } from '@/types/competition';
 import { BACKEND_URL, DEBUG } from '@/constants/env';
 
 export function CompetitionCreationModal() {
@@ -13,10 +13,11 @@ export function CompetitionCreationModal() {
     description: '',
     start_date: '',
     end_date: '',
-  };  
+  };
     
   const [isCompetitionModalVisible, setIsCompetitionModalVisible] = useState(false);
   const [competitionFormData, setCompetitionFormData] = useState<ICompetition>(clearedFormData);
+  const [categories, setCategories] = useState<string[]>([]);
 
   // functions 
   const handleChange = (key: keyof ICompetition, value: string) => {
@@ -58,6 +59,7 @@ export function CompetitionCreationModal() {
           
           <Modal visible={isCompetitionModalVisible} animationType="slide">
               <View style={styles.formContainer}>
+                {/* main competition creation fields  */}
                   <ThemedText type="title">Create New Competition</ThemedText>
                   <ThemedText>Name</ThemedText>
                   <TextInput
@@ -86,6 +88,7 @@ export function CompetitionCreationModal() {
                     value={competitionFormData.end_date}
                     onChangeText={value => handleChange('end_date', value)}
                   />
+                  {/* category selection */}
                   <Button title="Create" onPress={handleCreateCompetition} />
                   <Button title="Close" onPress={handleCloseCreateCompetitionModal} />
               </View>

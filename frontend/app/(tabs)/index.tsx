@@ -8,18 +8,9 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
+import { ICompetition } from '@/types/category';
 
 import { BACKEND_URL, DEBUG } from '@/constants/env';
-
-// define competition interface 
-export interface ICompetition {
-  id: number;
-  name: string;
-  description: string;
-  start_date: string;
-  end_date: string;
-}
-
 
 export default function HomeScreen() {
   const [competitions, setCompetitions] = useState<ICompetition[]>([]);
