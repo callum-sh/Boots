@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import { Image, StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '@/types/navigation';
+import { ICompetition, RootStackParamList } from './types';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
-import { ICompetition } from '@/types/category';
 
+import { router } from 'expo-router';
 import { BACKEND_URL, DEBUG } from '@/constants/env';
 
 export default function HomeScreen() {
@@ -46,7 +46,12 @@ export default function HomeScreen() {
 
   const handlePress = (competition: ICompetition) => {
     // Navigate to the details screen and pass competition data as params
-    navigation.navigate('CompetitionDetails', { competition });
+    const id = competition.id;
+
+    router.push({
+      pathname: '/competitionDetails/[id]',
+      params: { id },
+    });
   };
 
   const calculateProgress = (startDate: string, endDate: string) => {
@@ -57,7 +62,7 @@ export default function HomeScreen() {
   };
 
   const renderCompetitionItem = ({ item }: { item: ICompetition }) => {
-    const progress = calculateProgress(item.startDate, item.endDate);
+    const progress = calculateProgress(item.start_date, item.end_date);
     return (
       <TouchableOpacity onPress={() => handlePress(item)} style={styles.itemContainer}>
         <ThemedText>{item.name}</ThemedText>

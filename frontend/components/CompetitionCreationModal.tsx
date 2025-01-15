@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal, StyleSheet, View, TextInput } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import { ICompetition } from '@/types/competition';
+import { ICompetition } from '@/app/types'
 import { BACKEND_URL, DEBUG } from '@/constants/env';
 
 export function CompetitionCreationModal() {
@@ -36,15 +36,17 @@ export function CompetitionCreationModal() {
   
   const handleCreateCompetition = async () => {
     try {
-      await fetch(`${BACKEND_URL}/competition/`, {
+      const response = await fetch(`${BACKEND_URL}/competition/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(competitionFormData),
       });
-      if (DEBUG) {
-        console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+      if (response.ok) {
+        if (DEBUG) {
+          console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+        }
       }
     } catch (error) {
       console.error(`[error] failed to create competition: ${error}`);
