@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { Image, StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { ICompetition, RootStackParamList } from './types';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { ICompetition } from './types';
 
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
+import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
 import { BACKEND_URL, DEBUG } from '@/constants/env';
+import { Text, View } from '@/components/Themed';
+
 
 export default function HomeScreen() {
   const [competitions, setCompetitions] = useState<ICompetition[]>([]);
@@ -18,8 +16,6 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchUserCompetitions();
   }, []);
-
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   async function fetchUserCompetitions() {
     // fetch user's competitions from the backend
@@ -53,69 +49,70 @@ export default function HomeScreen() {
     });
   };
 
-  const calculateProgress = (startDate: string, endDate: string) => {
+  const calculateProgress = (startDate: string, endDate: string): number => {
     const start = new Date(startDate).getTime();
     const end = new Date(endDate).getTime();
     const now = Date.now();
     return ((now - start) / (end - start)) * 100;
   };
 
-  const renderCompetitionItem = ({ item }: { item: ICompetition }) => {
-    const progress = calculateProgress(item.start_date, item.end_date);
+  const renderCompetitionItem = (competition: ICompetition) => {
+    const progress = calculateProgress(competition.start_date, competition.end_date);
     return (
-      <TouchableOpacity onPress={() => handlePress(item)} style={styles.itemContainer}>
-        <ThemedText>{item.name}</ThemedText>
-        <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${progress}%` }]} />
-        </View>
+      <TouchableOpacity onPress={() => handlePress(competition)} key={competition.id} style={styles.competitionContainer}>
+        <Text>{competition.name}</Text>
+            <View style={styles.progressBarContainer}>
+              <View style={[styles.progressBar, { width: progress }]} />
+            </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Ongoing Competitions</ThemedText>
-      </ThemedView>
-
-      {
-        competitions.length > 0 ? (
-          <FlatList
-            data={competitions}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderCompetitionItem}
-            contentContainerStyle={{ paddingHorizontal: 2, paddingVertical: 8 }}
-          />
-        ) : (
-          <ThemedText>No competitions found</ThemedText>
-        )
-      }
-
-      <CompetitionCreationModal />
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Ongoing Competitions</Text>
+      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        {/* todo: replace w/ dynamic competitions */}
+      {competitions.length > 0 ? (
+        competitions.map((competition: ICompetition) => (
+          renderCompetitionItem(competition)
+        ))
+      ) : (
+        <Text>No competitions available</Text>
+      )}
+      <View style={styles.helpContainer}>
+        <Text style={styles.helpLinkText} lightColor={Colors.light.tint}>
+          (+) Create a new competition
+        </Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   stepContainer: {
     gap: 8,
     marginBottom: 8,
   },
-  itemContainer: {
+  progressBarContainer: {
+    height: 10,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
+    overflow: 'hidden',
+    marginTop: 8,
+  },
+  competitionContainer: {
     padding: 16,
+    width: '80%',
     marginVertical: 8,
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -125,29 +122,24 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  progressBarContainer: {
-    height: 10,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 5,
-    overflow: 'hidden',
-    marginTop: 8,
-  },
   progressBar: {
     height: '100%',
     backgroundColor: '#76c7c0',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  helpContainer: {
+    marginTop: 15,
+    marginHorizontal: 20,
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
+  },
+  helpLink: {
+    paddingVertical: 15,
+  },
+  helpLinkText: {
+    textAlign: 'center',
   },
 });
