@@ -15,8 +15,6 @@ type ThemeProps = {
 
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
-export type ButtonProps = ThemeProps & DefaultButton['props'];
-
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -44,4 +42,11 @@ export function View(props: ViewProps) {
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function RowView(props: ViewProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+
+  return <DefaultView style={[{ backgroundColor, flexDirection: 'row' }, style]} {...otherProps} />;
 }

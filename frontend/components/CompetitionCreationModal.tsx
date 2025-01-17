@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Modal, StyleSheet, View, TextInput } from 'react-native';
+import { Button, Modal, StyleSheet, TextInput } from 'react-native';
 
-import { ThemedText } from '@/components/ThemedText';
 import { ICompetition } from '@/types/competition';
-import { BACKEND_URL, DEBUG } from '@/constants/env';
+import { IconButton } from './IconButton';
+import { Colors } from '@/constants/Colors';
+import { createCompetition } from '@/network/competition';
+import { Text, View, RowView} from './Themed';
 
 export function CompetitionCreationModal() {
 
@@ -35,68 +37,101 @@ export function CompetitionCreationModal() {
   };
   
   const handleCreateCompetition = async () => {
-    try {
-      await fetch(`${BACKEND_URL}/competition/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(competitionFormData),
-      });
-      if (DEBUG) {
-        console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
-      }
-    } catch (error) {
-      console.error(`[error] failed to create competition: ${error}`);
-    }
-
+    await createCompetition(competitionFormData);
     handleCloseCreateCompetitionModal();
   };
   
   return (
       <>
-          <Button title="Create New Competition" onPress={() => {setIsCompetitionModalVisible(true)}} />
+        <View>
+          <IconButton
+            iconName="plus"
+            color={Colors.light.tint}
+            iconSize={32}
+            onPress={() => {setIsCompetitionModalVisible(true)}}
+          />
+        </View>
           
           <Modal visible={isCompetitionModalVisible} animationType="slide">
               <View style={styles.formContainer}>
                 {/* main competition creation fields  */}
-                  <ThemedText type="title">Create New Competition</ThemedText>
-                  <ThemedText>Name</ThemedText>
+                  <Text style={styles.title}>Create New Competition</Text>
+                  <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+                  
+                  <Text>Name</Text>
                   <TextInput
-                    style={{ borderWidth: 1, marginBottom: 8, padding: 4 }}
+                    style={styles.textInput}
                     value={competitionFormData.name}
                     onChangeText={value => handleChange('name', value)}
                   />
 
-                  <ThemedText>Description</ThemedText>
+                  <Text>Description</Text>
                   <TextInput
-                    style={{ borderWidth: 1, marginBottom: 8, padding: 4 }}
+                    style={styles.textInput}
                     value={competitionFormData.description}
                     onChangeText={value => handleChange('description', value)}
                   />
 
-                  <ThemedText>Start Date</ThemedText>
+                  <Text>Start Date</Text>
                   <TextInput
-                    style={{ borderWidth: 1, marginBottom: 8, padding: 4 }}
+                    style={styles.textInput}
                     value={competitionFormData.start_date}
                     onChangeText={value => handleChange('start_date', value)}
                   />
 
-                  <ThemedText>End Date</ThemedText>
+                  <Text>End Date</Text>
                   <TextInput
-                    style={{ borderWidth: 1, marginBottom: 8, padding: 4 }}
+                    style={styles.textInput}
                     value={competitionFormData.end_date}
                     onChangeText={value => handleChange('end_date', value)}
                   />
                   {/* category selection */}
-                  <Button title="Create" onPress={handleCreateCompetition} />
-                  <Button title="Close" onPress={handleCloseCreateCompetitionModal} />
+
+
+                  {/* submit logic  */}
+                  <RowView style={styles.submitContainer}>
+                    <IconButton
+                      backgroundColor={Colors.light.warning}
+                      iconName="close"
+                      color={Colors.light.warning}
+                      iconSize={32}
+                      onPress={handleCloseCreateCompetitionModal}
+                      content="close"
+                    />
+                    <IconButton
+                      iconName="plus"
+                      color={Colors.light.tint}
+                      iconSize={32}
+                      onPress={handleCreateCompetition}
+                      content="create"
+                    />
+                  </RowView>
               </View>
           </Modal>
       </>
 )};
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  submitContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '100%',
+  },
+  textInput: {
+    borderWidth: 1,
+    marginBottom: 8,
+    padding: 4,
+    borderRadius: 4,
+    borderColor: "rgb(102, 102, 102)",
+  },
   heading: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -110,9 +145,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 22,
   },
   formContainer: {
     padding: 20,
+    paddingTop: 80,
   },
   input: {
     height: 40,

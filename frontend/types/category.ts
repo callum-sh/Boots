@@ -1,4 +1,4 @@
-export interface ICompetition {
+export interface ICategory {
     id: number;
     name: string;
     description: string;

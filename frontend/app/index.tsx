@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { ICompetition } from '@/types/category';
-
-import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
-import { BACKEND_URL, DEBUG } from '@/constants/env';
+
+import { ICompetition } from '@/types/competition';
+import { Colors } from '@/constants/Colors';
 import { Text, View } from '@/components/Themed';
+import { calculateProgress } from '@/utils/date';
+import { fetchUserCompetitions } from '@/network/competition';
+import { IconButton } from '@/components/IconButton';
+import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
 
 
 export default function HomeScreen() {
@@ -14,46 +17,17 @@ export default function HomeScreen() {
 
   // fetch data needed to render page 
   useEffect(() => {
-    fetchUserCompetitions();
+    const fetchData = async () => {
+      const data = await fetchUserCompetitions();
+      setCompetitions(data);
+    };
+
+    fetchData();
   }, []);
-
-  async function fetchUserCompetitions() {
-    // fetch user's competitions from the backend
-    try {
-      const response = await fetch(`${BACKEND_URL}/competition`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      const competitionData = await response.json();
-
-      setCompetitions(competitionData);
-
-      if (DEBUG) {
-        console.log(`[debug] fetched competitions: ${JSON.stringify(competitionData)}`);
-      }
-    } catch (error) {
-      console.error(`[error] failed to fetch competitions: ${error}`);
-    }
-  }
 
   const handlePress = (competition: ICompetition) => {
     // Navigate to the details screen and pass competition data as params
-    const id = competition.id;
-
-    router.push({
-      pathname: '/competitionDetails/[id]',
-      params: { id },
-    });
-  };
-
-  const calculateProgress = (startDate: string, endDate: string): number => {
-    const start = new Date(startDate).getTime();
-    const end = new Date(endDate).getTime();
-    const now = Date.now();
-    return ((now - start) / (end - start)) * 100;
+    router.push(`/${competition.id}`);
   };
 
   const renderCompetitionItem = (competition: ICompetition) => {
@@ -70,21 +44,18 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ongoing Competitions</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        {/* todo: replace w/ dynamic competitions */}
-      {competitions.length > 0 ? (
-        competitions.map((competition: ICompetition) => (
-          renderCompetitionItem(competition)
-        ))
-      ) : (
-        <Text>No competitions available</Text>
-      )}
-      <View style={styles.helpContainer}>
-        <Text style={styles.helpLinkText} lightColor={Colors.light.tint}>
-          (+) Create a new competition
-        </Text>
+      <View style={styles.outerCompetitionContainer}>
+        <Text style={styles.title}>Ongoing Competitions</Text>
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        {competitions.length > 0 ? (
+          competitions.map((competition: ICompetition) => (
+            renderCompetitionItem(competition)
+          ))
+        ) : (
+          <Text>No competitions available</Text>
+        )}
       </View>
+      <CompetitionCreationModal />
     </View>
   );
 }
@@ -92,6 +63,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -121,6 +93,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+  },
+  outerCompetitionContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingBottom: 16,
   },
   progressBar: {
     height: '100%',
