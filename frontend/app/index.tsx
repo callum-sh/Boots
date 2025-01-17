@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
 
+import { Image, StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { ICompetition, RootStackParamList } from './types';
+
+import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
-import { ICompetition } from '@/types/category';
+import { router } from 'expo-router';
 import { BACKEND_URL, DEBUG } from '@/constants/env';
 
 export default function HomeScreen() {
@@ -14,6 +18,8 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchUserCompetitions();
   }, []);
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   async function fetchUserCompetitions() {
     // fetch user's competitions from the backend
@@ -39,7 +45,12 @@ export default function HomeScreen() {
 
   const handlePress = (competition: ICompetition) => {
     // Navigate to the details screen and pass competition data as params
-    return;
+    const id = competition.id;
+
+    router.push({
+      pathname: '/competitionDetails/[id]',
+      params: { id },
+    });
   };
 
   const calculateProgress = (startDate: string, endDate: string) => {
@@ -62,7 +73,15 @@ export default function HomeScreen() {
   };
 
   return (
-    <View>
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerImage={
+        <Image
+          source={require('@/assets/images/partial-react-logo.png')}
+          style={styles.reactLogo}
+        />
+      }
+    >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Ongoing Competitions</ThemedText>
       </ThemedView>
@@ -81,7 +100,7 @@ export default function HomeScreen() {
       }
 
       <CompetitionCreationModal />
-    </View>
+    </ParallaxScrollView>
   );
 }
 
