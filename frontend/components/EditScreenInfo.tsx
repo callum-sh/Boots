@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, useColorScheme } from 'react-native';
 
 import { ExternalLink } from './ExternalLink';
 import { MonoText } from './StyledText';
@@ -8,6 +8,8 @@ import { Text, View } from './Themed';
 import { Colors } from '@/constants/Colors';
 
 export default function EditScreenInfo({ path }: { path: string }) {
+  const theme = useColorScheme() ?? 'light';
+  
   return (
     <View>
       <View style={styles.getStartedContainer}>
@@ -37,7 +39,7 @@ export default function EditScreenInfo({ path }: { path: string }) {
         <ExternalLink
           style={styles.helpLink}
           href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">
-          <Text style={styles.helpLinkText} lightColor={Colors.light.tint}>
+          <Text style={styles.helpLinkText} lightColor={theme === 'light' ? Colors.light.tint : Colors.dark.tint}>
             Tap here if your app doesn't automatically update after making changes
           </Text>
         </ExternalLink>

@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Share } from 'react-native';
+import { StyleSheet, Share, useColorScheme } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import { Colors } from '@/constants/Colors';
@@ -13,6 +13,7 @@ import { IconButton } from '@/components/IconButton';
 export default function CompetitionDetails() {
   // todo: get from url or some alternative 
   const local = useLocalSearchParams();
+  const theme = useColorScheme() ?? 'light';
   const [competitionDetails, setCompetitionDetails] = useState<ICompetition | undefined>(undefined);
   const [progress, setProgress] = useState<number>(0);
 
@@ -56,7 +57,7 @@ export default function CompetitionDetails() {
       <IconButton
         iconName="share-apple"
         content="Share"
-        color={Colors.light.tint}
+        color={theme === 'light' ? Colors.light.tint : Colors.dark.tint}
         iconSize={32}
         onPress={handleShare}
       />

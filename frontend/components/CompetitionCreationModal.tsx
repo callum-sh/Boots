@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Modal, StyleSheet, TextInput } from 'react-native';
+import { Modal, StyleSheet, TextInput, useColorScheme } from 'react-native';
 
 import { ICompetition } from '@/types/competition';
 import { IconButton } from './IconButton';
@@ -8,6 +8,8 @@ import { createCompetition } from '@/network/competition';
 import { Text, View, RowView} from './Themed';
 
 export function CompetitionCreationModal() {
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === 'light' ? Colors.light : Colors.dark;
 
   const clearedFormData: ICompetition = {
     id: 0,
@@ -46,7 +48,7 @@ export function CompetitionCreationModal() {
         <View>
           <IconButton
             iconName="plus"
-            color={Colors.light.tint}
+            color={theme.tint}
             iconSize={32}
             onPress={() => {setIsCompetitionModalVisible(true)}}
           />
@@ -87,20 +89,19 @@ export function CompetitionCreationModal() {
                   />
                   {/* category selection */}
 
-
                   {/* submit logic  */}
                   <RowView style={styles.submitContainer}>
                     <IconButton
-                      backgroundColor={Colors.light.warning}
+                      backgroundColor={theme.warning}
                       iconName="close"
-                      color={Colors.light.warning}
+                      color={theme.warning}
                       iconSize={32}
                       onPress={handleCloseCreateCompetitionModal}
                       content="close"
                     />
                     <IconButton
                       iconName="plus"
-                      color={Colors.light.tint}
+                      color={theme.tint}
                       iconSize={32}
                       onPress={handleCreateCompetition}
                       content="create"
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 4,
     borderColor: "rgb(102, 102, 102)",
+    color: useColorScheme() === 'light' ? Colors.light.text : Colors.dark.text,
   },
   heading: {
     flexDirection: 'row',

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { router } from 'expo-router';
 
 import { ICompetition } from '@/types/competition';
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     padding: 16,
     width: '80%',
     marginVertical: 8,
-    backgroundColor: '#fff',
+    backgroundColor: useColorScheme() === 'light' ? '#fff' : '#2e2e2e',
     borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
