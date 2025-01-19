@@ -13,7 +13,6 @@ import { ParticipantLeaderboard } from '@/components/competitionDetails/Particip
 import { CompetitionCategoryList } from '@/components/competitionDetails/CompetitionCategoryList';
 
 export default function CompetitionDetails() {
-  // todo: get from url or some alternative 
   const local = useLocalSearchParams();
   const theme = useColorScheme() ?? 'light';
   const [competitionDetails, setCompetitionDetails] = useState<ICompetition | undefined>(undefined);
@@ -57,14 +56,14 @@ export default function CompetitionDetails() {
         <Text>{formatDate(competitionDetails?.start_date)} - {formatDate(competitionDetails?.end_date)}</Text>
       </View>
 
-      {/* display competition participant leaderboard */}
+      {/* display competition participant leaderboard if exist */}
       {competitionDetails && competitionDetails.participants.length > 0 ? (
         <ParticipantLeaderboard participants={competitionDetails.participants} />
       ) : (
         <Text>No participants yet</Text>
       )}
       
-      {/* display competition categories */}
+      {/* display competition categories if exist */}
       {competitionDetails && competitionDetails.categories.length > 0 ? (
         <CompetitionCategoryList categories={competitionDetails.categories} />
       ) : (
@@ -88,11 +87,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginHorizontal: 20,
     alignItems: 'center',
-  },
-  categoryTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 8,
   },
   detailContainer: {
     width: '80%',
