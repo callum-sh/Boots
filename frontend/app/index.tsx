@@ -7,7 +7,7 @@ import { ICompetition } from '@/types/competition';
 import { Text, View } from '@/components/Themed';
 import { calculateProgress } from '@/utils/date';
 import { fetchUserCompetitions } from '@/network/competition';
-import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
+import { CompetitionCreationModal } from '@/components/competitionCreation/CompetitionCreationModal';
 
 
 export default function HomeScreen() {
@@ -33,9 +33,9 @@ export default function HomeScreen() {
     return (
       <TouchableOpacity onPress={() => handlePress(competition)} key={competition.id} style={styles.competitionContainer}>
         <Text>{competition.name}</Text>
-            <View style={styles.progressBarContainer}>
-              <View style={[styles.progressBar, { width: progress }]} />
-            </View>
+        <View style={styles.progressBarContainer}>
+          <View style={[styles.progressBar, { width: progress }]} />
+        </View>
       </TouchableOpacity>
     );
   };

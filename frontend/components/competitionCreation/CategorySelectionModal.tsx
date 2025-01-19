@@ -1,23 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/Colors';
-import { Text, View} from './Themed';
+import { Text, View} from '../Themed';
 import { ICategory } from '@/types/category';
 import { ICompetition } from '@/types/competition';
 
 interface CategorySelectionModalProps {
   categories: ICategory[];
-  handleChange: (key: string | keyof ICompetition, value: any) => void;
+  handleChange: (key: keyof ICompetition, value: number[]) => void;
 }
 
 export function CategorySelectionModal({categories, handleChange}: CategorySelectionModalProps) {
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'light' ? Colors.light : Colors.dark;
 
+  const handleCategoryChange = (category: number) => {
+    /** on every change of selectedCategories, send a handleChange event */
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(selectedCategories.filter((id) => id !== category));
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
+
+    handleChange('categories', selectedCategories);
+  };
+
   const renderCategory = ({ item }: { item: ICategory }) => {
     return (
-      <Pressable onPress={() => handleChange('category', item.id)} style={styles.competitionContainer}>
+      <Pressable
+        onPress={() => handleCategoryChange(item.id)}
+        style={styles.competitionContainer}
+      >
         <View style={styles.competitionContainer}>
           <Text>{item.name}</Text>
         </View>
@@ -39,26 +54,9 @@ export function CategorySelectionModal({categories, handleChange}: CategorySelec
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  progressBarContainer: {
-    height: 10,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 5,
-    overflow: 'hidden',
-    marginTop: 8,
   },
   competitionContainer: {
     padding: 16,
@@ -70,30 +68,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-  },
-  outerCompetitionContainer: {
-    width: '100%',
-    alignItems: 'center',
-    paddingBottom: 16,
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#76c7c0',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-  helpContainer: {
-    marginTop: 15,
-    marginHorizontal: 20,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    textAlign: 'center',
   },
 });
