@@ -17,6 +17,8 @@ export function CompetitionCreationModal() {
     description: '',
     start_date: '',
     end_date: '',
+    categories: [],
+    participants: [],
   };
     
   const [isCompetitionModalVisible, setIsCompetitionModalVisible] = useState(false);
