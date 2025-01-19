@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, TextInput, useColorScheme } from 'react-native';
 
 import { ICompetition } from '@/types/competition';
-import { IconButton } from './IconButton';
+import { IconButton } from '../IconButton';
 import { Colors } from '@/constants/Colors';
 import { createCompetition } from '@/network/competition';
-import { Text, View, RowView} from './Themed';
+import { Text, View, RowView} from '../Themed';
+import { CategorySelectionModal } from './CategorySelectionModal';
+import { fetchCategories } from '@/network/category';
+import { ICategory } from '@/types/category';
 
 export function CompetitionCreationModal() {
   const colorScheme = useColorScheme();
@@ -17,14 +20,25 @@ export function CompetitionCreationModal() {
     description: '',
     start_date: '',
     end_date: '',
+    categories: [],
+    participants: [],
   };
     
   const [isCompetitionModalVisible, setIsCompetitionModalVisible] = useState(false);
   const [competitionFormData, setCompetitionFormData] = useState<ICompetition>(clearedFormData);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
 
   // functions 
-  const handleChange = (key: keyof ICompetition, value: string) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchCategories();
+      setCategories(data);
+    };
+
+    fetchData();
+  }, []);
+
+  const handleChange = (key: keyof ICompetition, value: string | number[]) => {
     // TODO: validate form (like date(s), etc.)
     setCompetitionFormData(prev => ({
       ...prev,
@@ -88,6 +102,7 @@ export function CompetitionCreationModal() {
                     onChangeText={value => handleChange('end_date', value)}
                   />
                   {/* category selection */}
+                  <CategorySelectionModal handleChange={handleChange} categories={categories} />
 
                   {/* submit logic  */}
                   <RowView style={styles.submitContainer}>

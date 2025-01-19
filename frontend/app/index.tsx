@@ -4,12 +4,10 @@ import { StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { router } from 'expo-router';
 
 import { ICompetition } from '@/types/competition';
-import { Colors } from '@/constants/Colors';
 import { Text, View } from '@/components/Themed';
 import { calculateProgress } from '@/utils/date';
 import { fetchUserCompetitions } from '@/network/competition';
-import { IconButton } from '@/components/IconButton';
-import { CompetitionCreationModal } from '@/components/CompetitionCreationModal';
+import { CompetitionCreationModal } from '@/components/competitionCreation/CompetitionCreationModal';
 
 
 export default function HomeScreen() {
@@ -35,9 +33,9 @@ export default function HomeScreen() {
     return (
       <TouchableOpacity onPress={() => handlePress(competition)} key={competition.id} style={styles.competitionContainer}>
         <Text>{competition.name}</Text>
-            <View style={styles.progressBarContainer}>
-              <View style={[styles.progressBar, { width: progress }]} />
-            </View>
+        <View style={styles.progressBarContainer}>
+          <View style={[styles.progressBar, { width: progress }]} />
+        </View>
       </TouchableOpacity>
     );
   };
@@ -47,7 +45,7 @@ export default function HomeScreen() {
       <View style={styles.outerCompetitionContainer}>
         <Text style={styles.title}>Ongoing Competitions</Text>
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        {competitions.length > 0 ? (
+        {competitions?.length > 0 ? (
           competitions.map((competition: ICompetition) => (
             renderCompetitionItem(competition)
           ))

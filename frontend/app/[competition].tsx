@@ -9,9 +9,10 @@ import { BACKEND_URL } from '@/constants/env';
 import { calculateProgress, formatDate } from '@/utils/date';
 import { fetchCompetitionDetails } from '@/network/competition';
 import { IconButton } from '@/components/IconButton';
+import { ParticipantLeaderboard } from '@/components/competitionDetails/ParticipantLeaderboard';
+import { CompetitionCategoryList } from '@/components/competitionDetails/CompetitionCategoryList';
 
 export default function CompetitionDetails() {
-  // todo: get from url or some alternative 
   const local = useLocalSearchParams();
   const theme = useColorScheme() ?? 'light';
   const [competitionDetails, setCompetitionDetails] = useState<ICompetition | undefined>(undefined);
@@ -44,6 +45,7 @@ export default function CompetitionDetails() {
 
   return (
     <View style={styles.container}>
+      {/* display competition details */}
       <View style={styles.detailContainer}>
         <Text style={ styles.title }>{competitionDetails?.name}</Text>
         <View style={styles.titleSeparator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
@@ -53,6 +55,21 @@ export default function CompetitionDetails() {
         <Text>{competitionDetails?.description}</Text>
         <Text>{formatDate(competitionDetails?.start_date)} - {formatDate(competitionDetails?.end_date)}</Text>
       </View>
+
+      {/* display competition participant leaderboard if exist */}
+      {competitionDetails && competitionDetails.participants.length > 0 ? (
+        <ParticipantLeaderboard participants={competitionDetails.participants} />
+      ) : (
+        <Text>No participants yet</Text>
+      )}
+      
+      {/* display competition categories if exist */}
+      {competitionDetails && competitionDetails.categories.length > 0 ? (
+        <CompetitionCategoryList categories={competitionDetails.categories} />
+      ) : (
+        <Text>No Categories Selected</Text>
+      )}
+
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <IconButton
         iconName="share-apple"
@@ -74,6 +91,7 @@ const styles = StyleSheet.create({
   detailContainer: {
     width: '80%',
     alignItems: 'flex-start',
+    paddingBottom: 16,
   },
   container: {
     flex: 1,

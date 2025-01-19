@@ -13,6 +13,8 @@ class Competition(models.Model):
     description = models.TextField(blank=True)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now() + timezone.timedelta(weeks=4))
+    categories = models.ManyToManyField('Category', related_name='competitions')
+    participants = models.ManyToManyField('Participant', related_name='competitions')
 
     def __str__(self):
         return self.name
@@ -26,7 +28,6 @@ class Category(models.Model):
     """
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name='competition_categories')
 
     def __str__(self):
         return self.name
@@ -37,12 +38,11 @@ class Participant(models.Model):
     A participant in a competition.
 
     """
-    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name='participants')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='competitions_joined')
     score = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.user.username} in {self.competition.name}"
+        return f"{self.user.username}"
     
     
 class Goal(models.Model):

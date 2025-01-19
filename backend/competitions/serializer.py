@@ -1,10 +1,6 @@
 from rest_framework import serializers
 from competitions.models import *
 
-class CompetitionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Competition
-        fields = '__all__'
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,6 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ParticipantSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='user.username')
     class Meta:
         model = Participant
         fields = '__all__'
@@ -19,4 +16,11 @@ class ParticipantSerializer(serializers.ModelSerializer):
 class GoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goal
+        fields = '__all__'
+
+class CompetitionSerializer(serializers.ModelSerializer):
+    categories = CategorySerializer(many=True, read_only=True)
+    participants = ParticipantSerializer(many=True, read_only=True)
+    class Meta:
+        model = Competition
         fields = '__all__'
