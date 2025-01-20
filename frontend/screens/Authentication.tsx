@@ -15,9 +15,9 @@ import { useAuth } from "@/context/AuthContext";
 const AuthenticationScreen = () => {
   const { setIsAuthenticated } = useAuth();
   const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState(""); // New field for registration
   const [loading, setLoading] = useState(false);
 
   const isValidEmail = (email: string) => {
@@ -27,12 +27,14 @@ const AuthenticationScreen = () => {
 
   const canSubmit = () => {
     if (isLogin) {
-      return username.trim() !== "" && password.trim() !== "";
+      return (
+        email.trim() !== "" && password.trim() !== "" && isValidEmail(email)
+      );
     }
     return (
-      username.trim() !== "" &&
-      password.trim() !== "" &&
       email.trim() !== "" &&
+      password.trim() !== "" &&
+      firstName.trim() !== "" &&
       isValidEmail(email)
     );
   };
@@ -42,33 +44,29 @@ const AuthenticationScreen = () => {
 
     try {
       if (isLogin) {
-        const response = await loginUser(username, password);
+        const response = await loginUser(email, password);
         if (response?.token) {
           // Save token to AsyncStorage
           await AsyncStorage.setItem("userToken", response.token);
           Alert.alert("Success", "Login successful!");
-          if (isLogin && response?.token) {
-            await AsyncStorage.setItem("userToken", response.token);
-            Alert.alert("Success", "Login successful!");
-            setIsAuthenticated(true); // Notify parent component
-          }
+          setIsAuthenticated(true); // Notify parent component
         } else {
           throw new Error("Login failed");
         }
       } else {
-        const user = await registerUser(username, email, password);
-        if (user) {
-          Alert.alert(
-            "Success",
-            "Registration successful! You can now log in."
-          );
-          setIsLogin(true); // Switch to login after successful registration
+        const response = await registerUser(firstName, email, password);
+        console.log("RESPONSE:", response);
+        if (response?.token) {
+          // Automatically log in the user after registration
+          await AsyncStorage.setItem("userToken", response.token);
+          console.log("Success", "Registration successful!");
+          setIsAuthenticated(true); // Notify parent component
         } else {
           throw new Error("Registration failed");
         }
       }
     } catch (error) {
-      Alert.alert("Error: Something went wrong");
+      Alert.alert("Error", "Something went wrong during authentication.");
     } finally {
       setLoading(false);
     }
@@ -78,27 +76,27 @@ const AuthenticationScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>{isLogin ? "Login" : "Register"}</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
-      />
-
       {!isLogin && (
         <TextInput
-          style={[
-            styles.input,
-            email && !isValidEmail(email) && { borderColor: "red" },
-          ]}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
+          style={styles.input}
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={setFirstName}
+          autoCapitalize="words"
         />
       )}
+
+      <TextInput
+        style={[
+          styles.input,
+          email && !isValidEmail(email) && { borderColor: "red" },
+        ]}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
 
       <TextInput
         style={styles.input}

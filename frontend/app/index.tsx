@@ -129,11 +129,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     backgroundColor: useColorScheme() === "light" ? "#fff" : "#2e2e2e",
     borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
   },
   outerCompetitionContainer: {
     width: "100%",

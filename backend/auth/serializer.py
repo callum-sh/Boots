@@ -8,10 +8,10 @@ class CreateUserSerializer(serializers.ModelSerializer):
         write_only=True,
         style={'input_type': 'password'}
     )
-
+    first_name = serializers.CharField(required=True)
     class Meta:
         model = get_user_model()
-        fields = ('email', 'password', 'first_name', 'last_name')
+        fields = ('email', 'password', 'first_name')
         write_only_fields = ('password',)
         read_only_fields = ('is_staff', 'is_superuser', 'is_active',)
 
@@ -30,10 +30,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        user = get_user_model().objects.create(
-            email=validated_data['email'],
+        User = get_user_model()
+        user = User.objects.create(
             first_name=validated_data.get('first_name', ''),
-            last_name=validated_data.get('last_name', ''),
+            email=validated_data['email'],  # Set email
+            username=validated_data['email'],  # Set username as email
         )
         user.set_password(validated_data['password'])
         user.save()

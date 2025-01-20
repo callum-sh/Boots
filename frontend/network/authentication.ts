@@ -3,17 +3,17 @@ import { IAuthResponse, IUser } from "@/types/authentication";
 
 // Register a new user
 export async function registerUser(
-  username: string,
+  firstName: string,
   email: string,
   password: string
 ): Promise<IUser | undefined> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/auth/register/`, {
+    const response = await fetch(`${BACKEND_URL}/auth/register/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, email, password }),
+      body: JSON.stringify({ first_name: firstName, email, password }),
     });
 
     const data = await response.json();
@@ -22,7 +22,7 @@ export async function registerUser(
       console.log(`[debug] User registered: ${JSON.stringify(data)}`);
     }
 
-    return data.user;
+    return data;
   } catch (error) {
     console.error(`[error] failed to register user: ${error}`);
     return undefined;
@@ -35,7 +35,7 @@ export async function loginUser(
   password: string
 ): Promise<IAuthResponse | undefined> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/auth/login/`, {
+    const response = await fetch(`${BACKEND_URL}/auth/login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export async function fetchAuthenticatedUser(
   token: string
 ): Promise<IUser | undefined> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/auth/user/`, {
+    const response = await fetch(`${BACKEND_URL}/auth/user/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export async function fetchAuthenticatedUser(
 // Log out the user
 export async function logoutUser(token: string): Promise<void> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/auth/logout/`, {
+    const response = await fetch(`${BACKEND_URL}/auth/logout/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
