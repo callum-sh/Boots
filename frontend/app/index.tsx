@@ -15,10 +15,12 @@ import { calculateProgress } from "@/utils/date";
 import { fetchUserCompetitions } from "@/network/competition";
 import { CompetitionCreationModal } from "@/components/competitionCreation/CompetitionCreationModal";
 import { useAuth } from "@/context/AuthContext";
+import { Colors } from "@/constants/Colors";
 
 export default function HomeScreen() {
   const { setIsAuthenticated } = useAuth();
   const [competitions, setCompetitions] = useState<ICompetition[]>([]);
+  const theme = useColorScheme() === 'light' ? Colors.light : Colors.dark;
 
   // fetch data needed to render page
   useEffect(() => {
@@ -54,7 +56,10 @@ export default function HomeScreen() {
       <TouchableOpacity
         onPress={() => handlePress(competition)}
         key={competition.id}
-        style={styles.competitionContainer}
+        style={[
+          styles.competitionContainer,
+          {backgroundColor: theme.container}
+        ]}
       >
         <Text>{competition.name}</Text>
         <View style={styles.progressBarContainer}>
@@ -125,7 +130,7 @@ const styles = StyleSheet.create({
     padding: 16,
     width: "80%",
     marginVertical: 8,
-    backgroundColor: useColorScheme() === "light" ? "#fff" : "#2e2e2e",
+    backgroundColor: "#fff",
     borderRadius: 8,
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
   },

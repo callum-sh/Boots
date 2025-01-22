@@ -72,32 +72,32 @@ export function CompetitionCreationModal() {
               <ScrollView style={styles.formContainer}>
                 {/* main competition creation fields  */}
                   <Text style={styles.title}>Create New Competition</Text>
-                  <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+                  <View style={styles.separator} lightColor="#fff" darkColor="rgba(255,255,255,0.1)" />
                   
                   <Text>Name</Text>
                   <TextInput
-                    style={styles.textInput}
+                    style={[styles.textInput, {color: theme.tint}]}
                     value={competitionFormData.name}
                     onChangeText={value => handleChange('name', value)}
                   />
 
                   <Text>Description</Text>
                   <TextInput
-                    style={styles.textInput}
+                    style={[styles.textInput, {color: theme.tint}]}
                     value={competitionFormData.description}
                     onChangeText={value => handleChange('description', value)}
                   />
 
                   <Text>Start Date</Text>
                   <TextInput
-                    style={styles.textInput}
+                    style={[styles.textInput, {color: theme.tint}]}
                     value={competitionFormData.start_date}
                     onChangeText={value => handleChange('start_date', value)}
                   />
 
                   <Text>End Date</Text>
                   <TextInput
-                    style={styles.textInput}
+                    style={[styles.textInput, {color: theme.tint}]}
                     value={competitionFormData.end_date}
                     onChangeText={value => handleChange('end_date', value)}
                   />
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 4,
     borderColor: "rgb(102, 102, 102)",
-    color: useColorScheme() === 'light' ? Colors.light.text : Colors.dark.text,
+    color: Colors.light.text,
   },
   heading: {
     flexDirection: 'row',

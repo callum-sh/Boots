@@ -47,7 +47,7 @@ export default function CompetitionDetails() {
     <View style={styles.container}>
       {/* display competition details */}
       <View style={styles.detailContainer}>
-        <Text style={ styles.title }>{competitionDetails?.name}</Text>
+        <Text style={styles.title}>{competitionDetails?.name}</Text>
         <View style={styles.titleSeparator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
         <View style={styles.progressBarContainer}>
           <View style={[styles.progressBar, { width: progress }]} />
