@@ -1,13 +1,17 @@
 import { BACKEND_URL, DEBUG } from "@/constants/env";
 import { ICompetition } from "@/types/competition";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export async function fetchCompetitionDetails(competitionId: number): Promise<ICompetition | undefined> {
     // fetch competition details from the backend
+    const token = await AsyncStorage.getItem("userToken");
+
     try {
       const response = await fetch(`${BACKEND_URL}/competition/${competitionId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Token ${token}`,
         }
       });
       const competitionData = await response.json();
@@ -25,11 +29,15 @@ export async function fetchCompetitionDetails(competitionId: number): Promise<IC
 
 export async function fetchUserCompetitions() {
   // fetch user's competitions from the backend
+  const token = await AsyncStorage.getItem("userToken");
+
   try {
     const response = await fetch(`${BACKEND_URL}/competition`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+
       }
     });
     const competitionData = await response.json();
@@ -46,11 +54,14 @@ export async function fetchUserCompetitions() {
 
 export async function createCompetition(competitionFormData: ICompetition) {
   // create a new competition on the backend
+  const token = await AsyncStorage.getItem("userToken");
+
   try {
     await fetch(`${BACKEND_URL}/competition/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
       },
       body: JSON.stringify(competitionFormData),
     });
