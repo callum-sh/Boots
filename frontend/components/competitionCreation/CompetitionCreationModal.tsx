@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import { Modal, ScrollView, StyleSheet, TextInput, useColorScheme } from 'react-native';
 
 import { ICompetition } from '@/types/competition';
 import { IconButton } from '../IconButton';
@@ -69,7 +69,7 @@ export function CompetitionCreationModal() {
         </View>
           
           <Modal visible={isCompetitionModalVisible} animationType="slide">
-              <View style={styles.formContainer}>
+              <ScrollView style={styles.formContainer}>
                 {/* main competition creation fields  */}
                   <Text style={styles.title}>Create New Competition</Text>
                   <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
@@ -122,7 +122,7 @@ export function CompetitionCreationModal() {
                       content="create"
                     />
                   </RowView>
-              </View>
+              </ScrollView>
           </Modal>
       </>
 )};

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   StyleSheet,
@@ -10,12 +10,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
 import { ICompetition } from "@/types/competition";
-import { Colors } from "@/constants/Colors";
 import { Text, View } from "@/components/Themed";
 import { calculateProgress } from "@/utils/date";
 import { fetchUserCompetitions } from "@/network/competition";
-import { IconButton } from "@/components/IconButton";
-import { CompetitionCreationModal } from "@/components/CompetitionCreationModal";
+import { CompetitionCreationModal } from "@/components/competitionCreation/CompetitionCreationModal";
 import { useAuth } from "@/context/AuthContext";
 
 export default function HomeScreen() {
