@@ -42,6 +42,26 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     # TODO: no permissions needed rn; must add
     permission_classes = []
 
+    def create(self, request):
+        print(request.user.id)
+        print(request.data)
+        
+        # get or create the participant
+        owner, valid = Participant.objects.get_or_create(user=request.user.id)
+        if not valid:
+            return Response({'error': 'Participant retrieval error'}, status=400)
+        
+        data = request.data
+        data['owner'] = owner.id
+        data['participants'] = [owner.id]
+
+        # create the competition
+        new_competition = Competition.objects.create(**data)
+        new_competition.save()
+
+        serialized = self.serializer_class(new_competition)
+        return Response(serialized.data)
+
 class CategoryViewSet(viewsets.ViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer

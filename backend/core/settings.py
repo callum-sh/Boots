@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # apps
     'competitions',
+    'invitations',
     # 'authentication',
     # REST API
     'rest_framework',
