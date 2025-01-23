@@ -4,20 +4,19 @@ import { ICategory } from "@/types/category";
 
 
 export function CompetitionCategoryList({ categories }: { categories: ICategory[] }) {
-  return (
-    <View style={styles.detailContainer}>
-        <Text style={styles.title}>Categories</Text>
-        <View style={styles.titleSeparator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        {categories.map(category => (
-            <View key={category.id}>
-            <Text style={styles.categoryTitle}>{category.name}</Text>
-            <Text>{category.description}</Text>
-            </View>
-        ))}
-    </View>
-  );
-}
-
+    return (
+      <View style={styles.detailContainer}>
+          <Text style={styles.title}>Categories</Text>
+          <View style={styles.titleSeparator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+          {categories.map(category => (
+              <View key={category.id}>
+                  <Text style={styles.categoryTitle}>{category.name}</Text>
+                  <Text>{category.description}</Text>
+              </View>
+          ))}
+      </View>
+    );
+  }
 
 const styles = StyleSheet.create({
     detailContainer: {

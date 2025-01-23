@@ -27,6 +27,7 @@ class Category(models.Model):
     Ex: Wakeup Time, Exercise, etc.
     """
     name = models.CharField(max_length=100)
+    public = models.BooleanField(default=False)
     description = models.TextField(blank=True)
 
     def __str__(self):

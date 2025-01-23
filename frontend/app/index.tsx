@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   useColorScheme,
   Alert,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -15,10 +16,12 @@ import { calculateProgress } from "@/utils/date";
 import { fetchUserCompetitions } from "@/network/competition";
 import { CompetitionCreationModal } from "@/components/competitionCreation/CompetitionCreationModal";
 import { useAuth } from "@/context/AuthContext";
+import { Colors } from "@/constants/Colors";
 
 export default function HomeScreen() {
   const { setIsAuthenticated } = useAuth();
   const [competitions, setCompetitions] = useState<ICompetition[]>([]);
+  const theme = useColorScheme() === 'light' ? Colors.light : Colors.dark;
 
   // fetch data needed to render page
   useEffect(() => {
@@ -54,7 +57,10 @@ export default function HomeScreen() {
       <TouchableOpacity
         onPress={() => handlePress(competition)}
         key={competition.id}
-        style={styles.competitionContainer}
+        style={[
+          styles.competitionContainer,
+          {backgroundColor: theme.container}
+        ]}
       >
         <Text>{competition.name}</Text>
         <View style={styles.progressBarContainer}>
@@ -65,7 +71,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.outerCompetitionContainer}>
         <Text style={styles.title}>Ongoing Competitions</Text>
         <View
@@ -80,18 +86,18 @@ export default function HomeScreen() {
         ) : (
           <Text>No competitions available</Text>
         )}
+        <CompetitionCreationModal />
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
       </View>
-      <CompetitionCreationModal />
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -99,6 +105,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
+    paddingVertical: 48,
   },
   stepContainer: {
     gap: 8,
@@ -125,11 +132,12 @@ const styles = StyleSheet.create({
     padding: 16,
     width: "80%",
     marginVertical: 8,
-    backgroundColor: useColorScheme() === "light" ? "#fff" : "#2e2e2e",
+    backgroundColor: "#fff",
     borderRadius: 8,
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
   },
   outerCompetitionContainer: {
+    flex: 1,
     width: "100%",
     alignItems: "center",
     paddingBottom: 16,

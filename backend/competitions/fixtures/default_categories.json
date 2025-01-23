@@ -1,0 +1,9 @@
+[
+    { "model": "competitions.category", "pk": 1, "fields": { "name": "Workout", "public": true } },
+    { "model": "competitions.category", "pk": 2, "fields": { "name": "Focus", "public": true } },
+    { "model": "competitions.category", "pk": 3, "fields": { "name": "Wakeup", "public": true } },
+    { "model": "competitions.category", "pk": 4, "fields": { "name": "Reading", "public": true } },
+    { "model": "competitions.category", "pk": 5, "fields": { "name": "Diet", "public": true } },
+    { "model": "competitions.category", "pk": 6, "fields": { "name": "Water", "public": true } },
+    { "model": "competitions.category", "pk": 7, "fields": { "name": "Social Media", "public": true } }
+]
