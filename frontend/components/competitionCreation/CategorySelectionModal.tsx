@@ -1,53 +1,61 @@
 import React, { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, TextInput, TouchableOpacity, useColorScheme } from 'react-native';
+import { Keyboard, Pressable, StyleSheet, Switch, TextInput, TouchableOpacity, useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/Colors';
-import { Text, View } from '../Themed';
+import { RowView, Text, View } from '../Themed';
 import { ICategory } from '@/types/category';
 import { ICompetition } from '@/types/competition';
 
 interface CategorySelectionModalProps {
   categories: ICategory[];
-  handleChange: (key: keyof ICompetition, value: number[]) => void;
+  handleChange: (key: keyof ICompetition, value: ICategory[]) => void;
 }
 
-export function CategorySelectionModal({ categories, handleChange }: CategorySelectionModalProps) {
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+export function CategorySelectionModal({
+  categories,
+  handleChange,
+}: CategorySelectionModalProps) {
+
+  const [selectedCategories, setSelectedCategories] = useState<ICategory[]>([]);
   const [newCategory, setNewCategory] = useState<string>('');
-  const [customCategories, setCustomCategories] = useState<ICategory[]>([]);
-  const popularCategories: ICategory[] = [
-    { id: 1, name: 'Workout' },
-    { id: 2, name: 'Focus' },
-    { id: 3, name: 'Wakeup' },
-    { id: 4, name: 'Reading' },
-    { id: 5, name: 'Diet' },
-    { id: 6, name: 'Water' },
-    { id: 7, name: 'Social Media' },
-  ];
+  const [isPublic, setIsPublic] = useState<boolean>(false);
+  const [publicCategories, setPublicCategories] = useState<ICategory[]>(categories.filter(category => category.public === true));
+  const [customCategories, setCustomCategories] = useState<ICategory[]>(categories.filter(category => category.public === false));
   const theme = useColorScheme() === 'light' ? Colors.light : Colors.dark;
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (newCategory.trim()) {
       const newCategoryObj = {
-        id: Math.max(...popularCategories.map((cat) => cat.id), ...customCategories.map((cat) => cat.id)) + 1,
+        id: 0,
         name: newCategory,
+        description: '',
+        public: isPublic,
       };
-      setCustomCategories([...customCategories, newCategoryObj]);
-      setSelectedCategories([...selectedCategories, newCategoryObj.id]);
+
+      const updatedSelectedCategories = [...selectedCategories, newCategoryObj];
+      setSelectedCategories(updatedSelectedCategories);
+      {isPublic ? (
+        setPublicCategories([...publicCategories, newCategoryObj])
+      ) : (
+        setCustomCategories([...customCategories, newCategoryObj])
+      )}
+      handleChange('categories', updatedSelectedCategories);
       setNewCategory('');
+      Keyboard.dismiss();
     }
   };
 
   const handlePress = (category: ICategory) => {
-    if (selectedCategories.includes(category.id)) {
-      setSelectedCategories(selectedCategories.filter((id) => id !== category.id));
-    } else {
-      setSelectedCategories([...selectedCategories, category.id]);
-    }
+    const updatedSelectedCategories = selectedCategories.includes(category)
+      ? selectedCategories.filter((cat) => cat !== category)
+      : [...selectedCategories, category];
+      
+    setSelectedCategories(updatedSelectedCategories);
+    handleChange('categories', updatedSelectedCategories);
   };
 
   const renderCategory = (category: ICategory) => {
-    const isSelected = selectedCategories.includes(category.id);
+    const isSelected = selectedCategories.includes(category);
     return (
       <TouchableOpacity
         onPress={() => handlePress(category)}
@@ -57,38 +65,61 @@ export function CategorySelectionModal({ categories, handleChange }: CategorySel
           {
             backgroundColor: theme.container,
             borderColor: isSelected ? '#007BFF' : theme.tint,
-            borderWidth: 2,
+            borderWidth: 1,
           },
         ]}
       >
-        <Text style={[styles.categoryText, { color: isSelected ? '#007BFF' : theme.text }]}>{category.name}</Text>
+      <Text style={[styles.categoryText, { color: isSelected ? '#007BFF' : theme.text }]}>{category.name}</Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={{ padding: 16 }}>
+    <View style={{ padding: 12 }}>
       <Text style={styles.title}>Category Selection</Text>
 
-      {/* Render Popular Categories */}
-      <Text style={styles.subTitle}>Popular Categories</Text>
+      {/* Render popular categories */}
+      <Text style={styles.subTitle}>Public Categories</Text>
       <View style={styles.categoryRow}>
-        {popularCategories.map((category: ICategory) => renderCategory(category))}
+        {publicCategories.map((category: ICategory) =>
+          renderCategory(category)
+        )}
       </View>
 
-      {/* Render Custom Categories */}
-      <Text style={styles.subTitle}>Custom Categories</Text>
+      {/* Render custom categories */}
+      <Text style={styles.subTitle}>Your Categories</Text>
       <View style={styles.categoryRow}>
-        {customCategories.map((category: ICategory) => renderCategory(category))}
+        {customCategories.length > 0 ? (
+          customCategories.map((category: ICategory) => renderCategory(category))
+        ) : (
+          <Text style={{ color: theme.text, paddingBottom: 26 }}>
+            {"No previous custom categories to display"}
+          </Text>
+        )}
       </View>
 
-      <TextInput
-        style={[styles.textInput, { color: theme.tint }]}
-        value={newCategory}
-        onChangeText={(text) => setNewCategory(text)}
-      />
+      {/* Add a new custom category */}
+      <RowView style={styles.inputRow}>
+        <TextInput
+          style={[styles.textInput, { color: theme.tint }]}
+          value={newCategory}
+          onChangeText={(text) => setNewCategory(text)}
+          placeholder="Enter new public/private category"
+          onSubmitEditing={handleAddCategory}
+        />
+        <View style={styles.switchContainer}>
+          <Switch
+            value={isPublic}
+            onValueChange={setIsPublic}
+            style={styles.toggle}
+          />
+          <Text style={{ color: theme.text }}>
+            {isPublic ? "Public Category" : "Private Category"}
+          </Text>
+        </View>
+      </RowView>
       <Pressable onPress={handleAddCategory} style={styles.addButton}>
-        <Text style={styles.addButtonText}>Add a new Custom Category</Text>
+        <Text style={styles.buttonText}>Add a new Custom Category</Text>
       </Pressable>
     </View>
   );
@@ -96,14 +127,14 @@ export function CategorySelectionModal({ categories, handleChange }: CategorySel
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 16,
   },
   subTitle: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
-    marginTop: 16,
+    marginTop: 8,
   },
   categoryRow: {
     flexDirection: 'row',
@@ -125,6 +156,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   textInput: {
+    flex: 1,
     borderWidth: 1,
     marginBottom: 8,
     padding: 4,
@@ -139,7 +171,21 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     alignItems: 'center',
   },
-  addButtonText: {
+  inputRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+    paddingBottom: 8,
+  },
+  toggle: {
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',

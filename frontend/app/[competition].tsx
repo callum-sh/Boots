@@ -62,7 +62,7 @@ export default function CompetitionDetails() {
       ) : (
         <Text>No participants yet</Text>
       )}
-      
+
       {/* display competition categories if exist */}
       {competitionDetails && competitionDetails.categories.length > 0 ? (
         <CompetitionCategoryList categories={competitionDetails.categories} />

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   useColorScheme,
   Alert,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -70,7 +71,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.outerCompetitionContainer}>
         <Text style={styles.title}>Ongoing Competitions</Text>
         <View
@@ -85,18 +86,18 @@ export default function HomeScreen() {
         ) : (
           <Text>No competitions available</Text>
         )}
+        <CompetitionCreationModal />
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
       </View>
-      <CompetitionCreationModal />
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -104,6 +105,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
+    paddingVertical: 48,
   },
   stepContainer: {
     gap: 8,
@@ -135,6 +137,7 @@ const styles = StyleSheet.create({
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
   },
   outerCompetitionContainer: {
+    flex: 1,
     width: "100%",
     alignItems: "center",
     paddingBottom: 16,

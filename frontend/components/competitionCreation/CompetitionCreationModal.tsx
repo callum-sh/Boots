@@ -28,7 +28,7 @@ export function CompetitionCreationModal() {
   const [competitionFormData, setCompetitionFormData] = useState<ICompetition>(clearedFormData);
   const [categories, setCategories] = useState<ICategory[]>([]);
 
-  // functions 
+  // fetch recommended categories
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchCategories();
@@ -38,7 +38,7 @@ export function CompetitionCreationModal() {
     fetchData();
   }, []);
 
-  const handleChange = (key: keyof ICompetition, value: string | number[]) => {
+  const handleChange = (key: keyof ICompetition, value: string | ICategory[]) => {
     // TODO: validate form (like date(s), etc.)
     setCompetitionFormData(prev => ({
       ...prev,
@@ -69,7 +69,7 @@ export function CompetitionCreationModal() {
         </View>
           
           <Modal visible={isCompetitionModalVisible} animationType="slide">
-              <ScrollView style={styles.formContainer}>
+              <View style={styles.formContainer}>
                 {/* main competition creation fields  */}
                   <Text style={styles.title}>Create New Competition</Text>
                   <View style={styles.separator} lightColor="#fff" darkColor="rgba(255,255,255,0.1)" />
@@ -122,7 +122,7 @@ export function CompetitionCreationModal() {
                       content="create"
                     />
                   </RowView>
-              </ScrollView>
+              </View>
           </Modal>
       </>
 )};
@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
     paddingTop: 22,
   },
   formContainer: {
+    flex: 1,
     padding: 20,
     paddingTop: 80,
   },
