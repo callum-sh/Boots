@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Boots",
-    "slug": "Boots",
+    "slug": "boots",
     "scheme": "Boots",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "08ccc684-052d-40e8-8844-840a7da2a446"
+      }
+    },
+    "owner": "callum-sh"
   }
 }
