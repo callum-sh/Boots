@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ParticipantSerializer(serializers.ModelSerializer):
-    user_name = serializers.ReadOnlyField(source='user.username')
+    user_name = serializers.ReadOnlyField(source='user.first_name')
     class Meta:
         model = Participant
         fields = '__all__'
@@ -21,14 +21,7 @@ class GoalSerializer(serializers.ModelSerializer):
 class CompetitionSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True)
     participants = ParticipantSerializer(many=True, read_only=True)
+
     class Meta:
         model = Competition
         fields = '__all__'
-
-    def create(self, validated_data):
-        categories_data = validated_data.pop('categories', [])
-        competition = Competition.objects.create(**validated_data)
-        for category_data in categories_data:
-            category, _ = Category.objects.get_or_create(**category_data)
-            competition.categories.add(category)
-        return competition

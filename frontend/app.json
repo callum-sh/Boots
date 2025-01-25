@@ -2,10 +2,10 @@
   "expo": {
     "name": "Boots",
     "slug": "Boots",
+    "scheme": "Boots",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

@@ -72,3 +72,24 @@ export async function createCompetition(competitionFormData: ICompetition) {
     console.error(`[error] failed to create competition: ${error}`);
   }
 }
+
+
+export async function joinCompetition(competitionId: number) {
+  // join a competition on the backend
+  const token = await AsyncStorage.getItem("userToken");
+
+  try {
+    await fetch(`${BACKEND_URL}/competition/${competitionId}/join/`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+    });
+    if (DEBUG) {
+      console.log(`[debug] joined competition: ${competitionId}`);
+    }
+  } catch (error) {
+    console.error(`[error] failed to join competition: ${error}`);
+  }
+}

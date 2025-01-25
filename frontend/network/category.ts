@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export async function fetchCategories(): Promise<ICategory[]> {
   // fetch user's competitions from the backend
   const token = await AsyncStorage.getItem("userToken");
+  console.log(token);
   
   try {
     const response = await fetch(`${BACKEND_URL}/category`, {
@@ -28,11 +29,14 @@ export async function fetchCategories(): Promise<ICategory[]> {
 
 export async function createCategory(category: ICategory) {
   // create a new competition on the backend
+  const token = await AsyncStorage.getItem("userToken");
+
   try {
     const response = await fetch(`${BACKEND_URL}/category/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
       },
       body: JSON.stringify(category),
     });

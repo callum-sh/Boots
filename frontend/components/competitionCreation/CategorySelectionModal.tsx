@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, Switch, TextInput, TouchableOpacity, useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/Colors';
@@ -8,7 +8,7 @@ import { ICompetition } from '@/types/competition';
 
 interface CategorySelectionModalProps {
   categories: ICategory[];
-  handleChange: (key: keyof ICompetition, value: ICategory[]) => void;
+  handleChange: (key: keyof ICompetition, value: number[]) => void;
 }
 
 export function CategorySelectionModal({
@@ -16,14 +16,25 @@ export function CategorySelectionModal({
   handleChange,
 }: CategorySelectionModalProps) {
 
-  const [selectedCategories, setSelectedCategories] = useState<ICategory[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [newCategory, setNewCategory] = useState<string>('');
   const [isPublic, setIsPublic] = useState<boolean>(false);
-  const [publicCategories, setPublicCategories] = useState<ICategory[]>(categories.filter(category => category.public === true));
-  const [customCategories, setCustomCategories] = useState<ICategory[]>(categories.filter(category => category.public === false));
+  const [publicCategories, setPublicCategories] = useState<ICategory[]>([]);
+  const [customCategories, setCustomCategories] = useState<ICategory[]>([]);
   const theme = useColorScheme() === 'light' ? Colors.light : Colors.dark;
 
+  useEffect(() => {
+    if (!Array.isArray(categories) || categories.length === 0) return;
+
+    // set default categories if there are categories to choose from
+    console.log(`categories: ${categories}`);
+    setPublicCategories(categories.filter((cat) => cat.public));
+
+    // TODO: pull private categories from user's profile 
+  }, [categories]);
+
   const handleAddCategory = async () => {
+    // TODO: actually create new category model in backend 
     if (newCategory.trim()) {
       const newCategoryObj = {
         id: 0,
@@ -32,7 +43,7 @@ export function CategorySelectionModal({
         public: isPublic,
       };
 
-      const updatedSelectedCategories = [...selectedCategories, newCategoryObj];
+      const updatedSelectedCategories = [...selectedCategories, newCategoryObj.id];
       setSelectedCategories(updatedSelectedCategories);
       {isPublic ? (
         setPublicCategories([...publicCategories, newCategoryObj])
@@ -46,16 +57,16 @@ export function CategorySelectionModal({
   };
 
   const handlePress = (category: ICategory) => {
-    const updatedSelectedCategories = selectedCategories.includes(category)
-      ? selectedCategories.filter((cat) => cat !== category)
-      : [...selectedCategories, category];
+    const updatedSelectedCategories = selectedCategories.includes(category.id)
+      ? selectedCategories.filter((cat) => cat !== category.id)
+      : [...selectedCategories, category.id];
       
     setSelectedCategories(updatedSelectedCategories);
     handleChange('categories', updatedSelectedCategories);
   };
 
   const renderCategory = (category: ICategory) => {
-    const isSelected = selectedCategories.includes(category);
+    const isSelected = selectedCategories.includes(category.id);
     return (
       <TouchableOpacity
         onPress={() => handlePress(category)}

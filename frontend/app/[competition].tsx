@@ -2,7 +2,7 @@ import { StyleSheet, Share, useColorScheme } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import { Colors } from '@/constants/Colors';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ICompetition } from '@/types/competition';
 import { BACKEND_URL } from '@/constants/env';
@@ -36,19 +36,20 @@ export default function CompetitionDetails() {
     try {
       await Share.share({
         message: `Join my boots competition: ${competitionDetails?.name}!`,
-        url: `${BACKEND_URL}/joinCompetition/${competitionDetails?.id}`,
-      });
+        url: `boots://invite/${competitionDetails?.id}`,
+      })
     } catch (error) {
       console.error('Error sharing:', error);
     }
   };
 
   return (
+    <>
+    <Stack.Screen options={{ title: competitionDetails?.name }} />
+    
     <View style={styles.container}>
       {/* display competition details */}
       <View style={styles.detailContainer}>
-        <Text style={styles.title}>{competitionDetails?.name}</Text>
-        <View style={styles.titleSeparator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
         <View style={styles.progressBarContainer}>
           <View style={[styles.progressBar, { width: progress }]} />
         </View>
@@ -79,6 +80,7 @@ export default function CompetitionDetails() {
         onPress={handleShare}
       />
     </View>
+    </>
   );
 }
 

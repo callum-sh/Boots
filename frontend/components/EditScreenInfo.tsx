@@ -8,7 +8,8 @@ import { Text, View } from './Themed';
 import { Colors } from '@/constants/Colors';
 
 export default function EditScreenInfo({ path }: { path: string }) {
-  const theme = useColorScheme() ?? 'light';
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === 'light' ? Colors.light : Colors.dark;
   
   return (
     <View>

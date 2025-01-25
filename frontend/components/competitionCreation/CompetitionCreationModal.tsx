@@ -38,7 +38,7 @@ export function CompetitionCreationModal() {
     fetchData();
   }, []);
 
-  const handleChange = (key: keyof ICompetition, value: string | ICategory[]) => {
+  const handleChange = (key: keyof ICompetition, value: string | number[]) => {
     // TODO: validate form (like date(s), etc.)
     setCompetitionFormData(prev => ({
       ...prev,

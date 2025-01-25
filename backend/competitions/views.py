@@ -1,9 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 
 from competitions.models import *
 from competitions.serializer import *
-
 
 
 class ParticipantViewSet(viewsets.ViewSet):
@@ -39,33 +40,40 @@ class ParticipantViewSet(viewsets.ViewSet):
 class CompetitionViewSet(viewsets.ModelViewSet):
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
-    # TODO: no permissions needed rn; must add
     permission_classes = []
 
     def create(self, request):
-        print(request.user.id)
-        print(request.data)
-        
-        # get or create the participant
-        owner, valid = Participant.objects.get_or_create(user=request.user.id)
-        if not valid:
-            return Response({'error': 'Participant retrieval error'}, status=400)
-        
+        # TODO: better way to validate form? 
         data = request.data
-        data['owner'] = owner.id
-        data['participants'] = [owner.id]
+        new_competition = Competition.objects.create(
+            name=data['name'],
+            description=data['description'],
+            start_date=data['start_date'],
+            end_date=data['end_date'],
+        )
 
-        # create the competition
-        new_competition = Competition.objects.create(**data)
-        new_competition.save()
+        owner, created = Participant.objects.get_or_create(
+            user=request.user,
+            competition=new_competition
+        )
+        
+        if not created and not owner:
+            return Response({'error': 'Participant retrieval error'}, status=400)
 
-        serialized = self.serializer_class(new_competition)
-        return Response(serialized.data)
+        if 'categories' in data:
+            new_competition.categories.set(data['categories'])
+        
+        new_competition.admins.set([owner.id])
+
+        return Response(
+            CompetitionSerializer(new_competition).data,
+            status=201
+        )
 
 class CategoryViewSet(viewsets.ViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [] # TODO 
+    permission_classes = [] 
 
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
@@ -122,3 +130,18 @@ class GoalViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+@api_view(['PUT'])
+def join_competition(request, pk):
+    print(request.user)
+    competition = Competition.objects.get(pk=pk)
+    participant = Participant.objects.create(
+        user=request.user,
+        competition=competition
+    )
+
+    if not participant:
+        return Response({'error': 'Participant creation error'}, status=400)
+    
+    return Response({'message': f'Successfully joined {competition.name}'}, status=200)

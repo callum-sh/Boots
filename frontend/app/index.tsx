@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  StyleSheet,
-  TouchableOpacity,
-  useColorScheme,
-  Alert,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, useColorScheme, Alert, ScrollView} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 
 import { ICompetition } from "@/types/competition";
 import { Text, View } from "@/components/Themed";
@@ -71,14 +65,10 @@ export default function HomeScreen() {
   };
 
   return (
+    <>
+    <Stack.Screen options={{ title: 'Ongoing Competitions' }} />
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.outerCompetitionContainer}>
-        <Text style={styles.title}>Ongoing Competitions</Text>
-        <View
-          style={styles.separator}
-          lightColor="#eee"
-          darkColor="rgba(255,255,255,0.1)"
-        />
         {competitions.length > 0 ? (
           competitions.map((competition: ICompetition) =>
             renderCompetitionItem(competition)
@@ -92,6 +82,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </>
   );
 }
 
