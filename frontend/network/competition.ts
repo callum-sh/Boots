@@ -3,29 +3,30 @@ import { ICompetition } from "@/types/competition";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export async function fetchCompetitionDetails(competitionId: number): Promise<ICompetition | undefined> {
-    // fetch competition details from the backend
-    const token = await AsyncStorage.getItem("userToken");
+  // fetch competition details from the backend
+  const token = await AsyncStorage.getItem("userToken");
 
-    try {
-      const response = await fetch(`${BACKEND_URL}/competition/${competitionId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${token}`,
-        }
-      });
-      const competitionData = await response.json();
-
-      if (DEBUG) {
-        console.log(`[debug] fetched competition details: ${JSON.stringify(competitionData)}`);
+  try {
+    const response = await fetch(`${BACKEND_URL}/competition/${competitionId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
       }
-      return competitionData;
+    });
+    const competitionData = await response.json();
 
-    } catch (error) {
-      console.error(`[error] failed to fetch competition details: ${error}`);
-      return undefined;
+    if (DEBUG) {
+      console.log(`[debug] fetched competition details: ${JSON.stringify(competitionData)}`);
     }
-  };
+    return competitionData;
+
+  } catch (error) {
+    console.error(`[error] failed to fetch competition details: ${error}`);
+    return undefined;
+  }
+};
+
 
 export async function fetchUserCompetitions() {
   // fetch user's competitions from the backend
@@ -37,7 +38,6 @@ export async function fetchUserCompetitions() {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${token}`,
-
       }
     });
     const competitionData = await response.json();
@@ -50,7 +50,8 @@ export async function fetchUserCompetitions() {
   } catch (error) {
     console.error(`[error] failed to fetch user competitions: ${error}`);
   }
-}
+};
+
 
 export async function createCompetition(competitionFormData: ICompetition) {
   // create a new competition on the backend
@@ -61,7 +62,7 @@ export async function createCompetition(competitionFormData: ICompetition) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
+        'Authorization': `Token ${token}`,
       },
       body: JSON.stringify(competitionFormData),
     });
@@ -71,7 +72,7 @@ export async function createCompetition(competitionFormData: ICompetition) {
   } catch (error) {
     console.error(`[error] failed to create competition: ${error}`);
   }
-}
+};
 
 
 export async function joinCompetition(competitionId: number) {
@@ -83,7 +84,7 @@ export async function joinCompetition(competitionId: number) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
+        'Authorization': `Token ${token}`,
       },
     });
     if (DEBUG) {
@@ -92,4 +93,4 @@ export async function joinCompetition(competitionId: number) {
   } catch (error) {
     console.error(`[error] failed to join competition: ${error}`);
   }
-}
+};

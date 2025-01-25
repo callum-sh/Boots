@@ -11,6 +11,7 @@ import { fetchUserCompetitions } from "@/network/competition";
 import { CompetitionCreationModal } from "@/components/competitionCreation/CompetitionCreationModal";
 import { useAuth } from "@/context/AuthContext";
 import { Colors } from "@/constants/Colors";
+import { logoutUser } from "@/network/authentication";
 
 export default function HomeScreen() {
   const { setIsAuthenticated } = useAuth();
@@ -34,9 +35,17 @@ export default function HomeScreen() {
 
   const handleLogout = async () => {
     try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      await logoutUser(token);
       await AsyncStorage.removeItem("userToken");
+
       Alert.alert("Success", "You have been logged out.");
       setIsAuthenticated(false); // Notify parent component
+      
     } catch (error) {
       Alert.alert("Error", "Failed to log out. Please try again.");
     }

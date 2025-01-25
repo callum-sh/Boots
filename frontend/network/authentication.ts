@@ -83,7 +83,7 @@ export async function fetchAuthenticatedUser(
 }
 
 // Log out the user
-export async function logoutUser(token: string): Promise<void> {
+export async function logoutUser(token: string): Promise<boolean> {
   try {
     const response = await fetch(`${BACKEND_URL}/auth/logout/`, {
       method: "POST",
@@ -96,11 +96,16 @@ export async function logoutUser(token: string): Promise<void> {
     if (response.ok) {
       if (DEBUG) {
         console.log("[debug] User logged out successfully");
+        return true;
       }
     } else {
       console.error(`[error] failed to log out: ${response.statusText}`);
+      return false;
     }
   } catch (error) {
     console.error(`[error] failed to log out: ${error}`);
+    return false;
   }
+
+  return false;
 }

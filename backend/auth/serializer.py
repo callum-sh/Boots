@@ -37,5 +37,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
             username=validated_data['email'],  # Set username as email
         )
         user.set_password(validated_data['password'])
+        user.is_authenticated = True
         user.save()
         return user
