@@ -5,7 +5,6 @@ import { Colors } from '@/constants/Colors';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ICompetition } from '@/types/competition';
-import { BACKEND_URL } from '@/constants/env';
 import { calculateProgress, formatDate } from '@/utils/date';
 import { fetchCompetitionDetails } from '@/network/competition';
 import { IconButton } from '@/components/IconButton';

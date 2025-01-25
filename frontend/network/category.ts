@@ -1,4 +1,3 @@
-import { BACKEND_URL, DEBUG } from "@/constants/env";
 import { ICategory } from "@/types/category";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -8,7 +7,7 @@ export async function fetchCategories(): Promise<ICategory[]> {
   console.log(token);
   
   try {
-    const response = await fetch(`${BACKEND_URL}/category`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/category`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -16,7 +15,7 @@ export async function fetchCategories(): Promise<ICategory[]> {
       }
     });
     const competitionData = await response.json();
-    if (DEBUG) {
+    if (process.env.DEBUG) {
       console.log(`[debug] fetched categories: ${JSON.stringify(competitionData)}`);
     }
     return competitionData;
@@ -32,7 +31,7 @@ export async function createCategory(category: ICategory) {
   const token = await AsyncStorage.getItem("userToken");
 
   try {
-    const response = await fetch(`${BACKEND_URL}/category/`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/category/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +40,7 @@ export async function createCategory(category: ICategory) {
       body: JSON.stringify(category),
     });
     const data: ICategory = await response.json();
-    if (DEBUG) {
+    if (process.env.DEBUG) {
       console.log(`[debug] created category: ${JSON.stringify(data)}`);
     }
     return data;

@@ -1,4 +1,3 @@
-import { BACKEND_URL, DEBUG } from "@/constants/env";
 import { IAuthResponse, IUser } from "@/types/authentication";
 
 // Register a new user
@@ -8,7 +7,7 @@ export async function registerUser(
   password: string
 ): Promise<IUser | undefined> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/register/`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/register/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,8 +17,8 @@ export async function registerUser(
 
     const data = await response.json();
 
-    if (DEBUG) {
-      console.log(`[debug] User registered: ${JSON.stringify(data)}`);
+    if (process.env.DEBUG) {
+      console.log(`[DEBUG] User registered: ${JSON.stringify(data)}`);
     }
 
     return data;
@@ -35,7 +34,7 @@ export async function loginUser(
   password: string
 ): Promise<IAuthResponse | undefined> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/login/`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,8 +44,8 @@ export async function loginUser(
 
     const data: IAuthResponse = await response.json();
 
-    if (DEBUG) {
-      console.log(`[debug] User logged in: ${JSON.stringify(data)}`);
+    if (process.env.DEBUG) {
+      console.log(`[DEBUG] User logged in: ${JSON.stringify(data)}`);
     }
 
     return data;
@@ -61,7 +60,7 @@ export async function fetchAuthenticatedUser(
   token: string
 ): Promise<IUser | undefined> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/user/`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/user/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -71,8 +70,8 @@ export async function fetchAuthenticatedUser(
 
     const data: IUser = await response.json();
 
-    if (DEBUG) {
-      console.log(`[debug] Authenticated user: ${JSON.stringify(data)}`);
+    if (process.env.DEBUG) {
+      console.log(`[DEBUG] Authenticated user: ${JSON.stringify(data)}`);
     }
 
     return data;
@@ -85,7 +84,7 @@ export async function fetchAuthenticatedUser(
 // Log out the user
 export async function logoutUser(token: string): Promise<boolean> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/logout/`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/logout/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -94,8 +93,8 @@ export async function logoutUser(token: string): Promise<boolean> {
     });
 
     if (response.ok) {
-      if (DEBUG) {
-        console.log("[debug] User logged out successfully");
+      if (process.env.DEBUG) {
+        console.log("[DEBUG] User logged out successfully");
         return true;
       }
     } else {

@@ -1,4 +1,3 @@
-import { BACKEND_URL, DEBUG } from "@/constants/env";
 import { ICompetition } from "@/types/competition";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -7,7 +6,7 @@ export async function fetchCompetitionDetails(competitionId: number): Promise<IC
   const token = await AsyncStorage.getItem("userToken");
 
   try {
-    const response = await fetch(`${BACKEND_URL}/competition/${competitionId}`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -16,7 +15,7 @@ export async function fetchCompetitionDetails(competitionId: number): Promise<IC
     });
     const competitionData = await response.json();
 
-    if (DEBUG) {
+    if (process.env.DEBUG) {
       console.log(`[debug] fetched competition details: ${JSON.stringify(competitionData)}`);
     }
     return competitionData;
@@ -33,7 +32,7 @@ export async function fetchUserCompetitions() {
   const token = await AsyncStorage.getItem("userToken");
 
   try {
-    const response = await fetch(`${BACKEND_URL}/competition`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +40,7 @@ export async function fetchUserCompetitions() {
       }
     });
     const competitionData = await response.json();
-    if (DEBUG) {
+    if (process.env.DEBUG) {
       console.log(`[debug] fetched competitions: ${JSON.stringify(competitionData)}`);
     }
     return competitionData;
@@ -58,7 +57,7 @@ export async function createCompetition(competitionFormData: ICompetition) {
   const token = await AsyncStorage.getItem("userToken");
 
   try {
-    await fetch(`${BACKEND_URL}/competition/`, {
+    await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +65,7 @@ export async function createCompetition(competitionFormData: ICompetition) {
       },
       body: JSON.stringify(competitionFormData),
     });
-    if (DEBUG) {
+    if (process.env.DEBUG) {
       console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
     }
   } catch (error) {
@@ -80,14 +79,14 @@ export async function joinCompetition(competitionId: number) {
   const token = await AsyncStorage.getItem("userToken");
 
   try {
-    await fetch(`${BACKEND_URL}/competition/${competitionId}/join/`, {
+    await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}/join/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Token ${token}`,
       },
     });
-    if (DEBUG) {
+    if (process.env.DEBUG) {
       console.log(`[debug] joined competition: ${competitionId}`);
     }
   } catch (error) {
