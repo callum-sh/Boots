@@ -34,7 +34,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('auth/', include('accounts.urls')),  # Ensure 'accounts.urls' exists    
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema'),
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('', include('competitions.urls')),
     path('token/', 
