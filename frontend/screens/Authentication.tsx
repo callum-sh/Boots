@@ -44,28 +44,33 @@ const AuthenticationScreen = () => {
 
     try {
       if (isLogin) {
+        // Login flow
         const response = await loginUser(email, password);
-        if (response?.token) {
-          // Save token to AsyncStorage
-          await AsyncStorage.setItem("userToken", response.token);
+        if (response?.access && response?.refresh) {
+          // Save access and refresh tokens to AsyncStorage
+          await AsyncStorage.setItem("accessToken", response.access);
+          await AsyncStorage.setItem("refreshToken", response.refresh);
           Alert.alert("Success", "Login successful!");
           setIsAuthenticated(true); // Notify parent component
         } else {
           throw new Error("Login failed");
         }
       } else {
+        // Registration flow
         const response = await registerUser(firstName, email, password);
-        console.log("RESPONSE:", response);
-        if (response?.token) {
-          // Automatically log in the user after registration
-          await AsyncStorage.setItem("userToken", response.token);
-          console.log("Success", "Registration successful!");
+        console.log(response);
+        if (response?.access) {
+          // Save access and refresh tokens to AsyncStorage
+          await AsyncStorage.setItem("accessToken", response.access);
+          await AsyncStorage.setItem("refreshToken", response.refresh);
+          Alert.alert("Success", "Registration successful!");
           setIsAuthenticated(true); // Notify parent component
         } else {
           throw new Error("Registration failed");
         }
       }
     } catch (error) {
+      console.error("Error during authentication:", error);
       Alert.alert("Error", "Something went wrong during authentication.");
     } finally {
       setLoading(false);
