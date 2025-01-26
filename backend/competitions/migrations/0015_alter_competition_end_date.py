@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('competitions', '0009_alter_competition_end_date'),
+        ('competitions', '0014_alter_competition_end_date'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='competition',
             name='end_date',
-            field=models.DateTimeField(default=datetime.datetime(2025, 2, 23, 1, 16, 46, 139588, tzinfo=datetime.timezone.utc)),
+            field=models.DateTimeField(default=datetime.datetime(2025, 2, 23, 1, 16, 54, 265095, tzinfo=datetime.timezone.utc)),
         ),
     ]
