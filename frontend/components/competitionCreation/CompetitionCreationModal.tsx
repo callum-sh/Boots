@@ -65,6 +65,7 @@ export function CompetitionCreationModal() {
             color={theme.tint}
             iconSize={32}
             onPress={() => {setIsCompetitionModalVisible(true)}}
+            content="Make Competition"
           />
         </View>
           

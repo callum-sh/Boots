@@ -1,4 +1,5 @@
 import { IAuthResponse, IUser } from "@/types/authentication";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Register a new user
 export async function registerUser(
@@ -56,9 +57,9 @@ export async function loginUser(
 }
 
 // Fetch the currently authenticated user
-export async function fetchAuthenticatedUser(
-  token: string
-): Promise<IUser | undefined> {
+export async function fetchAuthenticatedUser(): Promise<IUser | undefined> {
+  const token = await AsyncStorage.getItem("userToken");
+
   try {
     const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/user/`, {
       method: "GET",

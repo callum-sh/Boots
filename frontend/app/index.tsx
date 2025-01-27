@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { StyleSheet, TouchableOpacity, useColorScheme, Alert, ScrollView} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StyleSheet, TouchableOpacity, useColorScheme, ScrollView, Image} from "react-native";
 import { router, Stack } from "expo-router";
 
 import { ICompetition } from "@/types/competition";
@@ -9,12 +8,10 @@ import { Text, View } from "@/components/Themed";
 import { calculateProgress } from "@/utils/date";
 import { fetchUserCompetitions } from "@/network/competition";
 import { CompetitionCreationModal } from "@/components/competitionCreation/CompetitionCreationModal";
-import { useAuth } from "@/context/AuthContext";
 import { Colors } from "@/constants/Colors";
-import { logoutUser } from "@/network/authentication";
+import { IconButton } from "@/components/IconButton";
 
 export default function HomeScreen() {
-  const { setIsAuthenticated } = useAuth();
   const [competitions, setCompetitions] = useState<ICompetition[]>([]);
   const theme = useColorScheme() === 'light' ? Colors.light : Colors.dark;
 
@@ -30,25 +27,7 @@ export default function HomeScreen() {
 
   const handlePress = (competition: ICompetition) => {
     // Navigate to the details screen and pass competition data as params
-    router.push(`/${competition.id}`);
-  };
-
-  const handleLogout = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
-
-      await logoutUser(token);
-      await AsyncStorage.removeItem("userToken");
-
-      Alert.alert("Success", "You have been logged out.");
-      setIsAuthenticated(false); // Notify parent component
-      
-    } catch (error) {
-      Alert.alert("Error", "Failed to log out. Please try again.");
-    }
+    router.push(`/competition/${competition.id}`);
   };
 
   const renderCompetitionItem = (competition: ICompetition) => {
@@ -73,9 +52,29 @@ export default function HomeScreen() {
     );
   };
 
+  const handleProfile = () => {
+    router.push("/profile");
+  }; 
+
   return (
     <>
-    <Stack.Screen options={{ title: 'Ongoing Competitions' }} />
+    <Stack.Screen
+      name="OngoingCompetitions"
+      options={{
+        headerTitle: 'Ongoing Competitions',
+        headerTitleAlign: 'center',
+        headerRight: () => (
+          <IconButton
+            iconName="user"
+            color={theme.tint}
+            iconSize={28}
+            onPress={handleProfile}
+            style={{ marginRight: 10 }}
+          />
+        ),
+      }}
+    />
+    
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.outerCompetitionContainer}>
         {competitions.length > 0 ? (
@@ -83,12 +82,9 @@ export default function HomeScreen() {
             renderCompetitionItem(competition)
           )
         ) : (
-          <Text>No competitions available</Text>
+          <Text style={styles.title}>😔 No competitions</Text>
         )}
         <CompetitionCreationModal />
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
     </>
@@ -140,6 +136,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     alignItems: "center",
+    justifyContent: "center",
     paddingBottom: 16,
   },
   progressBar: {
