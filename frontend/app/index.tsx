@@ -59,20 +59,22 @@ export default function HomeScreen() {
   return (
     <>
     <Stack.Screen
+      name="OngoingCompetitions"
       options={{
-        title: 'Ongoing Competitions',
+        headerTitle: 'Ongoing Competitions',
+        headerTitleAlign: 'center',
         headerRight: () => (
-          <View>
-            <IconButton
-              iconName="profile"
-              color={theme.tint}
-              iconSize={32}
-              onPress={handleProfile}
-            />
-          </View>
+          <IconButton
+            iconName="user"
+            color={theme.tint}
+            iconSize={28}
+            onPress={handleProfile}
+            style={{ marginRight: 10 }}
+          />
         ),
       }}
     />
+    
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.outerCompetitionContainer}>
         {competitions.length > 0 ? (
