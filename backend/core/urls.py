@@ -34,8 +34,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema'),
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
+    path('auth/', include('auth.urls')),
     path('', include('competitions.urls')),
-    path('token/', jwt_views.TokenObtainPairView.as_view(), name ='token_obtain_pair'),
-    path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name ='token_refresh')
+    path('auth/login/', jwt_views.TokenObtainPairView.as_view(), name ='token_obtain_pair'),
+    path('auth/refresh/', jwt_views.TokenRefreshView.as_view(), name ='token_refresh')
 ]

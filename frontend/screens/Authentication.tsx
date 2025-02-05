@@ -8,68 +8,48 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { registerUser, loginUser } from "@/network/authentication";
 import { useAuth } from "@/context/AuthContext";
 
 const AuthenticationScreen = () => {
   const { setIsAuthenticated } = useAuth();
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
-  const [email, setEmail] = useState("");
+  const [isLogin, setIsLogin] = useState(true);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState(""); // New field for registration
   const [loading, setLoading] = useState(false);
-
-  const isValidEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
 
   const canSubmit = () => {
     if (isLogin) {
       return (
-        email.trim() !== "" && password.trim() !== "" && isValidEmail(email)
+        username.trim() !== "" && password.trim() !== ""
       );
     }
     return (
-      email.trim() !== "" &&
       password.trim() !== "" &&
-      firstName.trim() !== "" &&
-      isValidEmail(email)
+      username.trim() !== ""
     );
   };
 
-  const handleAuth = async () => {
+  const handleLogin = async () => {
     setLoading(true);
 
-    try {
-      if (isLogin) {
-        const response = await loginUser(email, password);
-        if (response?.token) {
-          // Save token to AsyncStorage
-          await AsyncStorage.setItem("userToken", response.token);
-          Alert.alert("Success", "Login successful!");
-          setIsAuthenticated(true); // Notify parent component
-        } else {
-          throw new Error("Login failed");
-        }
+    if (isLogin) {
+      const loggedIn = await loginUser(username, password);
+      if (loggedIn) {
+        setIsAuthenticated(true);
       } else {
-        const response = await registerUser(firstName, email, password);
-        console.log("RESPONSE:", response);
-        if (response?.token) {
-          // Automatically log in the user after registration
-          await AsyncStorage.setItem("userToken", response.token);
-          console.log("Success", "Registration successful!");
-          setIsAuthenticated(true); // Notify parent component
-        } else {
-          throw new Error("Registration failed");
-        }
+        Alert.alert("Error", "Invalid email or password");
       }
-    } catch (error) {
-      Alert.alert("Error", "Something went wrong during authentication.");
-    } finally {
-      setLoading(false);
+    } else {
+      // const user = await registerUser(username, password);
+      // if (user) {
+      //   setIsAuthenticated(true);
+      // } else {
+      //   Alert.alert("Error", "Failed to register user");
+      // }
     }
+
+    setLoading(false);
   };
 
   return (
@@ -79,23 +59,19 @@ const AuthenticationScreen = () => {
       {!isLogin && (
         <TextInput
           style={styles.input}
-          placeholder="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
           autoCapitalize="words"
         />
       )}
 
       <TextInput
-        style={[
-          styles.input,
-          email && !isValidEmail(email) && { borderColor: "red" },
-        ]}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
         autoCapitalize="none"
-        keyboardType="email-address"
       />
 
       <TextInput
@@ -111,7 +87,7 @@ const AuthenticationScreen = () => {
       ) : (
         <TouchableOpacity
           style={[styles.button, !canSubmit() && { backgroundColor: "#ccc" }]}
-          onPress={handleAuth}
+          onPress={handleLogin}
           disabled={!canSubmit()}
         >
           <Text style={styles.buttonText}>

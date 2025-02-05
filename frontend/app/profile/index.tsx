@@ -21,6 +21,9 @@ export default function ProfileScreen() {
   }, []);
 
   const handleSignOut = async () => {
+
+
+
     const token = await AsyncStorage.getItem('token');
     if (!token) {
       console.error('No token found in storage');
@@ -40,21 +43,21 @@ export default function ProfileScreen() {
     />
 
     {/* rendering user info */}
-    {user ? (
+    {/* {user ? ( */}
       <View style={styles.container}>
         <Text style={styles.title}>User Profile</Text>
-        <Text>Name: {user.username}</Text>
-        <Text>Email: {user.email}</Text>
+        {/* <Text>Name: {user.username}</Text>
+        <Text>Email: {user.email}</Text> */}
 
         {/* TODO: would be nice to add lots of metrics about wins, etc. */}
 
         <Button title="Sign Out" onPress={handleSignOut} />
       </View>
-    ) : (
+    {/* ) : (
       <View style={styles.container}>
         <Text style={styles.title}>Loading...</Text>
       </View>
-    )}
+    )} */}
     </>
   );
 }

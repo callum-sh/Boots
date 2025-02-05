@@ -16,7 +16,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const checkAuthStatus = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem("access_token");
       setIsAuthenticated(!!token);
     } catch (error) {
       console.error("Error checking authentication status:", error);
