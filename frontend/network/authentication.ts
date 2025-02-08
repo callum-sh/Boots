@@ -96,15 +96,16 @@ export async function fetchAuthenticatedUser(): Promise<IUser | undefined> {
 }
 
 // Log out the user
-export async function logoutUser(refresh: string): Promise<boolean> {
+export async function logoutUser(): Promise<boolean> {
   try {
+    const refresh = await AsyncStorage.getItem('refresh_token');
     const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/logout/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
-      body: JSON.stringify({ refresh }),
+      body: JSON.stringify({ refresh_token: refresh }),
     });
 
     await AsyncStorage.removeItem('access_token');

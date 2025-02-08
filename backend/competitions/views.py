@@ -47,9 +47,7 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         List all competitions that the user is a participant in.
 
         """
-        user = request.user # allows anonymous
-        assert user.is_authenticated
-        queryset = Competition.objects.filter(participants__user=user)
+        queryset = Competition.objects.filter(participants__user=request.user)
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)
@@ -59,8 +57,14 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         Create new competition with creating user as owner and participant.
 
         """
-        # TODO: better way to validate form?
         data = request.data
+
+        # Validate required fields
+        required_fields = ["name", "description", "start_date", "end_date"]
+        if not all(field in data for field in required_fields):
+            return Response({"error": "Missing required fields"}, status=400)
+
+        # Create the competition
         new_competition = Competition.objects.create(
             name=data["name"],
             description=data["description"],
@@ -68,6 +72,7 @@ class CompetitionViewSet(viewsets.ModelViewSet):
             end_date=data["end_date"],
         )
 
+        # Create or get the participant (owner)
         owner, created = Participant.objects.get_or_create(
             user=request.user, competition=new_competition
         )
@@ -75,10 +80,15 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         if not created and not owner:
             return Response({"error": "Participant retrieval error"}, status=400)
 
+        # Add categories if provided
         if "categories" in data:
-            new_competition.categories.set(data["categories"])
+            try:
+                new_competition.categories.set(data["categories"])
+            except Exception as e:
+                return Response({"error": f"Invalid categories: {str(e)}"}, status=400)
 
-        new_competition.admins.set([owner.id])
+        # Add the owner as an admin
+        new_competition.admins.add(request.user)
 
         return Response(CompetitionSerializer(new_competition).data, status=201)
 

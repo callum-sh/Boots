@@ -21,9 +21,6 @@ export default function ProfileScreen() {
   }, []);
 
   const handleSignOut = async () => {
-
-
-
     const token = await AsyncStorage.getItem('token');
     if (!token) {
       console.error('No token found in storage');

@@ -5,8 +5,9 @@ import { fetchWrapper } from "./fetchWrapper";
 export async function fetchCompetitionDetails(competitionId: number): Promise<ICompetition | undefined> {
   // fetch competition details from the backend
   try {
-    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}`, {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}/`, {
       method: 'GET',
+      headers: { "Content-Type": "application/json" }
     });
 
     if (response.ok) {
@@ -47,22 +48,26 @@ export async function fetchUserCompetitions() {
 
 export async function createCompetition(competitionFormData: ICompetition) {
   // create a new competition on the backend
-  const token = await AsyncStorage.getItem("userToken");
-
   try {
-    await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition/`, {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(competitionFormData),
     });
-    if (process.env.DEBUG) {
-      console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+
+    if (response.ok) {
+      if (process.env.DEBUG) {
+        console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+      }
+      return true;
+    } else {
+      console.error(`[error] failed to create competition; response not ok`);
+      return false;
     }
+
   } catch (error) {
     console.error(`[error] failed to create competition: ${error}`);
+    return false;
   }
 };
 
