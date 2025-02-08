@@ -14,9 +14,15 @@ import { useAuth } from "@/context/AuthContext";
 const AuthenticationScreen = () => {
   const { setIsAuthenticated } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
 
   const canSubmit = () => {
     if (isLogin) {
@@ -25,8 +31,10 @@ const AuthenticationScreen = () => {
       );
     }
     return (
+      email.trim() !== "" &&
+      username.trim() !== "" &&
       password.trim() !== "" &&
-      username.trim() !== ""
+      isValidEmail(email)
     );
   };
 
@@ -41,14 +49,13 @@ const AuthenticationScreen = () => {
         Alert.alert("Error", "Invalid email or password");
       }
     } else {
-      // const user = await registerUser(username, password);
-      // if (user) {
-      //   setIsAuthenticated(true);
-      // } else {
-      //   Alert.alert("Error", "Failed to register user");
-      // }
+      const user = await registerUser(email, username, password);
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        Alert.alert("Error", "Failed to register user");
+      }
     }
-
     setLoading(false);
   };
 
@@ -58,11 +65,15 @@ const AuthenticationScreen = () => {
 
       {!isLogin && (
         <TextInput
-          style={styles.input}
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="words"
+          style={[
+            styles.input,
+            email && !isValidEmail(email) && { borderColor: "red" },
+          ]}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
         />
       )}
 

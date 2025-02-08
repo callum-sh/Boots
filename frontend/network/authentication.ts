@@ -4,29 +4,36 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Register a new user
 export async function registerUser(
-  firstName: string,
   email: string,
+  username: string,
   password: string
-): Promise<IUser | undefined> {
+): Promise<Boolean> {
   try {
     const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/register/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ first_name: firstName, email, password }),
+      body: JSON.stringify({ email, username, password }),
     });
-
     const data = await response.json();
 
-    if (process.env.DEBUG) {
-      console.log(`[DEBUG] User registered: ${JSON.stringify(data)}`);
+    if (data?.access && data?.refresh) {
+      await AsyncStorage.clear();
+      await AsyncStorage.setItem('access_token', data?.access);
+      await AsyncStorage.setItem('refresh_token', data?.refresh);
+    } else {
+      console.error(`[error] failed to register user: ${data}`);
+      return false;
     }
 
-    return data;
+    console.log("RESPONSE:", data);
+    console.log("storage keys:", await AsyncStorage.getItem('access_token'), await AsyncStorage.getItem('refresh_token'));
+    return true;
+
   } catch (error) {
     console.error(`[error] failed to register user: ${error}`);
-    return undefined;
+    return false
   }
 }
 
@@ -41,7 +48,6 @@ export async function loginUser(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        
       },
       body: JSON.stringify({ username,  password }),
     });
