@@ -6,21 +6,22 @@ import { router, Stack } from "expo-router";
 import { ICompetition } from "@/types/competition";
 import { Text, View } from "@/components/Themed";
 import { calculateProgress } from "@/utils/date";
-import { fetchUserCompetitions } from "@/network/competition";
+import { fetchUserInvites, joinCompetition } from "@/network/competition";
 import { CompetitionCreationModal } from "@/components/competitionCreation/CompetitionCreationModal";
 import { Colors } from "@/constants/Colors";
 import { IconButton } from "@/components/IconButton";
 
-export default function HomeScreen() {
-  const [competitions, setCompetitions] = useState<ICompetition[]>([]);
+export default function InviteScreen() {
+  const [invites, setInvites] = useState<ICompetition[]>([]);
+  const [competitionDetails, setCompetitionDetails] = useState<ICompetition | undefined>(undefined);
   const theme = useColorScheme() === 'light' ? Colors.light : Colors.dark;
 
   // fetch data needed to render page
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchUserCompetitions();
+      const data = await fetchUserInvites();
       if (data) {
-        setCompetitions(data);
+        setInvites(data);
       }
     };
 
@@ -54,52 +55,31 @@ export default function HomeScreen() {
     );
   };
 
-  const handleProfile = () => {
-    router.push("/profile");
-  }; 
-
-  const handleInvites = () => {
-    router.push("/invite");
-  }; 
-
+  const handleJoiningCompetition = async () => {
+    if (!competitionDetails) return;
+    await joinCompetition(competitionDetails.id);
+    router.replace("/")
+  };
+  
   return (
     <>
     <Stack.Screen
-      name="OngoingCompetitions"
-      options={{
-        headerTitle: 'Ongoing Competitions',
-        headerTitleAlign: 'center',
-        headerRight: () => (
-          <>
-            <IconButton
-              iconName="envelope"
-              color={"#ff6b6b"}
-              iconSize={28}
-              onPress={handleInvites}
-              style={{ marginRight: 15 }}
-            />
-            <IconButton
-              iconName="user"
-              color={"#ff6b6b"}
-              iconSize={28}
-              onPress={handleProfile}
-              style={{ marginRight: 15 }}
-            />
-          </>
-        ),
-      }}
+        name="Incoming Invites"
+        options={{
+            headerTitle: 'Incoming Invites',
+            headerTitleAlign: 'center',
+        }}
     />
     
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.outerCompetitionContainer}>
-        {competitions && competitions.length > 0 ? (
-          competitions.map((competition: ICompetition) =>
+        {invites && invites.length > 0 ? (
+          invites.map((competition: ICompetition) =>
             renderCompetitionItem(competition)
           )
         ) : (
-          <Text style={styles.title}>😔 No competitions</Text>
+          <Text style={styles.title}>😔 No Invites</Text>
         )}
-        <CompetitionCreationModal />
       </View>
     </ScrollView>
     </>

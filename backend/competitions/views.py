@@ -151,11 +151,26 @@ class GoalViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+    
+class InviteViewSet(viewsets.ViewSet):
+    queryset = Invite.objects.all()
+    serializer_class = InviteSerializer
 
+    def list(self, request):
+        queryset = self.queryset.filter(user=request.user)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+    
+    def create(self, request):
+        data = request.data
+        data["user"] = User.objects.get(user=request.user).id
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 @api_view(["PUT"])
 def join_competition(request, pk):
-    print(request.user)
     competition = Competition.objects.get(pk=pk)
     participant = Participant.objects.create(user=request.user, competition=competition)
 

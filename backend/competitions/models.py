@@ -59,3 +59,14 @@ class Goal(models.Model):
 
     def __str__(self):
         return f"{self.description} [{self.category.category.name}]"
+
+class Invite(models.Model):
+    """
+    A competition invitation sent to a user.
+    
+    """
+    user = models.ManyToManyField(User, related_name='invites')
+    competition = models.ManyToManyField(Competition, related_name='invites')
+    
+    def __str__(self):
+        return self.username

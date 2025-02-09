@@ -18,6 +18,11 @@ class GoalSerializer(serializers.ModelSerializer):
         model = Goal
         fields = '__all__'
 
+class InviteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invite
+        fields = '__all__'
+
 class CompetitionSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True)
     participants = ParticipantSerializer(many=True, read_only=True)

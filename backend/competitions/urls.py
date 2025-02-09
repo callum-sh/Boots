@@ -8,6 +8,7 @@ router.register(r'category', CategoryViewSet, basename='category')
 router.register(r'competition', CompetitionViewSet, basename='competition')
 router.register(r'participant', ParticipantViewSet, basename='participant')
 router.register(r'goal', GoalViewSet, basename='goal')
+router.register(r'invites', InviteViewSet, basename='invite')
 
 urlpatterns = router.urls
 

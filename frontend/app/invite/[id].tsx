@@ -1,4 +1,5 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ICompetition } from '@/types/competition';
 import { fetchCompetitionDetails, joinCompetition } from '@/network/competition';
@@ -25,7 +26,8 @@ export default function InviteScreen() {
 
     const handleJoiningCompetition = async () => {
         if (!competitionDetails) return;
-        joinCompetition(competitionDetails.id);
+        await joinCompetition(competitionDetails.id);
+        router.push("/")
     };
 
   return (
