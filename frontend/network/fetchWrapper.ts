@@ -62,14 +62,9 @@ export const fetchWrapper = async (url: string, options: RequestInit): Promise<R
                     console.error(body);
                     console.error(refreshResponse);
 
-                    // Log out the user if the refresh token is invalid
-                    const refresh = await AsyncStorage.getItem('refresh_token');
-                    if (refresh) {
-                        console.error(`Logging out user ${refresh}`);
-                        await logoutUser(refresh);
-                    } else {
-                        console.error('No refresh token found in storage');
-                    }
+                    // Log out the user
+                    console.error(`Logging out user`);
+                    await logoutUser();
                 }
             } catch (error) {
                 console.error(`[error] failed to refresh token: ${error}`);
