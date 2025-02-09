@@ -19,7 +19,9 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchUserCompetitions();
-      setCompetitions(data);
+      if (data) {
+        setCompetitions(data);
+      }
     };
 
     fetchData();
@@ -77,7 +79,7 @@ export default function HomeScreen() {
     
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.outerCompetitionContainer}>
-        {competitions.length > 0 ? (
+        {competitions && competitions.length > 0 ? (
           competitions.map((competition: ICompetition) =>
             renderCompetitionItem(competition)
           )

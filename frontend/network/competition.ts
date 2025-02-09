@@ -1,24 +1,21 @@
 import { ICompetition } from "@/types/competition";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchWrapper } from "./fetchWrapper";
 
 export async function fetchCompetitionDetails(competitionId: number): Promise<ICompetition | undefined> {
   // fetch competition details from the backend
-  const token = await AsyncStorage.getItem("userToken");
-
   try {
-    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}`, {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}/`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      }
+      headers: { "Content-Type": "application/json" }
     });
-    const competitionData = await response.json();
 
-    if (process.env.DEBUG) {
-      console.log(`[debug] fetched competition details: ${JSON.stringify(competitionData)}`);
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      console.error("[error] failed to fetch competition details; response not ok")
     }
-    return competitionData;
 
   } catch (error) {
     console.error(`[error] failed to fetch competition details: ${error}`);
@@ -29,47 +26,48 @@ export async function fetchCompetitionDetails(competitionId: number): Promise<IC
 
 export async function fetchUserCompetitions() {
   // fetch user's competitions from the backend
-  const token = await AsyncStorage.getItem("userToken");
-
   try {
-    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition`, {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      }
+      headers: { "Content-Type": "application/json" }
     });
-    const competitionData = await response.json();
-    if (process.env.DEBUG) {
-      console.log(`[debug] fetched competitions: ${JSON.stringify(competitionData)}`);
-    }
-    return competitionData;
 
-    
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      console.error(`[error] failed to fetch user competitions; response not ok`);
+    }
+
   } catch (error) {
-    console.error(`[error] failed to fetch user competitions: ${error}`);
+    console.error(`[error] failed to fetch user competitions: ${error}`)
+    return undefined;
   }
 };
 
 
 export async function createCompetition(competitionFormData: ICompetition) {
   // create a new competition on the backend
-  const token = await AsyncStorage.getItem("userToken");
-
   try {
-    await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition/`, {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(competitionFormData),
     });
-    if (process.env.DEBUG) {
-      console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+
+    if (response.ok) {
+      if (process.env.DEBUG) {
+        console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+      }
+      return true;
+    } else {
+      console.error(`[error] failed to create competition; response not ok`);
+      return false;
     }
+
   } catch (error) {
     console.error(`[error] failed to create competition: ${error}`);
+    return false;
   }
 };
 

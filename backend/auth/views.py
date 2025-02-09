@@ -1,43 +1,38 @@
-from django.shortcuts import render
+from .serializers import UserSerializer
 
-from django.contrib.auth import get_user_model
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework import status
 from rest_framework.views import APIView
-from auth.serializer import CreateUserSerializer
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
 
+class RegisterUserView(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = UserSerializer
+     
+    def post(self, request):
+        """
+        Register new user
 
-class CreateUserAPIView(CreateAPIView):
-    serializer_class = CreateUserSerializer
-    permission_classes = [AllowAny]
+        """
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            if user:
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
+                return Response({'access': access_token, 'refresh': str(refresh)}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-
-        # We create a token than will be used for future auth
-        token = Token.objects.create(user=serializer.instance)
-        token_data = {"token": token.key}
-
-        return Response(
-            {**serializer.data, **token_data},
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
-
-
-class LogoutUserAPIView(APIView):
-    queryset = get_user_model().objects.all()
-    permission_classes = [IsAuthenticated]
-
-
-    def get(self, request, format=None):
-        # simply delete the token to force a login
-        request.user.auth_token.delete()
-        request.user.is_authenticated = False
-        return Response(status=status.HTTP_200_OK)
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
+     
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

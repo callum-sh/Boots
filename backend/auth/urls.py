@@ -1,10 +1,7 @@
 from django.urls import path
-from rest_framework.authtoken.views import obtain_auth_token
-from .views import CreateUserAPIView, LogoutUserAPIView
-
+from . import views
 
 urlpatterns = [
-    path('login/', obtain_auth_token, name='auth_user_login'),
-    path('register/', CreateUserAPIView.as_view(), name='auth_user_create'),
-    path('logout/', LogoutUserAPIView.as_view(), name='auth_user_logout'),
+     path('register/', views.RegisterUserView.as_view(), name ='register'),
+     path('logout/', views.LogoutView.as_view(), name ='logout')
 ]

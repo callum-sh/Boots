@@ -1,10 +1,9 @@
 export interface IUser {
   username: string;
-  email?: string;
-  token?: string;
+  email: string;
 }
 
 export interface IAuthResponse {
-  user: IUser;
-  token: string;
+  refresh: string;
+  access: string;
 }

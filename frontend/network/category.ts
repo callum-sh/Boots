@@ -1,24 +1,22 @@
 import { ICategory } from "@/types/category";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchWrapper } from "./fetchWrapper";
 
 export async function fetchCategories(): Promise<ICategory[]> {
   // fetch user's competitions from the backend
-  const token = await AsyncStorage.getItem("userToken");
-  console.log(token);
-  
   try {
-    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/category`, {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/category/`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      }
+      headers: { "Content-Type": "application/json" }
     });
-    const competitionData = await response.json();
-    if (process.env.DEBUG) {
-      console.log(`[debug] fetched categories: ${JSON.stringify(competitionData)}`);
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      console.error(`[error] failed to fetch user categories; response not ok`);
+      return [];
     }
-    return competitionData;
 
   } catch (error) {
     console.error(`[error] failed to fetch user categories: ${error}`);
