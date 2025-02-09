@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { StyleSheet, TouchableOpacity, useColorScheme, ScrollView, Image} from "react-native";
+import { StyleSheet, TouchableOpacity, useColorScheme, ScrollView, Image, Alert} from "react-native";
 import { router, Stack } from "expo-router";
 
 import { ICompetition } from "@/types/competition";
@@ -68,10 +68,10 @@ export default function HomeScreen() {
         headerRight: () => (
           <IconButton
             iconName="user"
-            color={theme.tint}
+            color={"#ff6b6b"}
             iconSize={28}
             onPress={handleProfile}
-            style={{ marginRight: 10 }}
+            style={{ marginRight: 15 }}
           />
         ),
       }}
@@ -108,16 +108,6 @@ const styles = StyleSheet.create({
   stepContainer: {
     gap: 8,
     marginBottom: 8,
-  },
-  logoutButton: {
-    backgroundColor: "#ff6b6b",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 5,
-  },
-  logoutText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
   progressBarContainer: {
     height: 10,
