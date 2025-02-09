@@ -25,7 +25,7 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     setIsAuthenticated(false);
-    router.replace("/")
+    router.push("/")
 
     const loggedOut = await logoutUser();
     if (!loggedOut) {
@@ -34,8 +34,8 @@ export default function ProfileScreen() {
   };
 
   const handleHome = () => {
-      router.replace("/");
-    };
+    router.replace("/");
+  };
 
   return (
     <>
