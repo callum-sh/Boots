@@ -2,10 +2,10 @@ import { IconButton } from '@/components/IconButton';
 import { useAuth } from '@/context/AuthContext';
 import { fetchAuthenticatedUser, logoutUser } from '@/network/authentication';
 import { IUser } from '@/types/authentication';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text } from "@/components/Themed";
+import { Button, StyleSheet, Alert } from 'react-native';
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<IUser | undefined>(undefined);
@@ -45,7 +45,6 @@ export default function ProfileScreen() {
         headerTitle: user ? user.username : 'Profile',
         headerTitleAlign: 'center',
         headerLeft: () => (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
           <IconButton
             iconName="arrow-left"
             color={"#ff6b6b"}
@@ -53,8 +52,6 @@ export default function ProfileScreen() {
             onPress={handleHome}
             style={{ marginLeft: 15 }}
           />
-          <Text style={{ color: "#ff6b6b", fontSize: 13, marginLeft: 5 }}>Home</Text>
-          </View>
         ),
       }}
     />

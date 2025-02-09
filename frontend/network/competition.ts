@@ -7,19 +7,22 @@ export async function fetchCompetitionDetails(competitionId: number): Promise<IC
   try {
     const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}/`, {
       method: 'GET',
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
+      }
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      console.error("[error] failed to fetch competition details; response not ok")
+    if (!response.ok) {
+      const errorMessage = await response.text()
+      console.error(`[error] failed to fetch competition details: ${errorMessage}`)
     }
+    const data = await response.json();
+    return data;
 
   } catch (error) {
-    console.error(`[error] failed to fetch competition details: ${error}`);
-    return undefined;
+    console.error(`[error]: ${error}`);
+    return;
   }
 };
 
@@ -29,19 +32,23 @@ export async function fetchUserCompetitions() {
   try {
     const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/`, {
       method: 'GET',
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
+      }
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      console.error(`[error] failed to fetch user competitions; response not ok`);
+    if (!response.ok) {
+      const errorMessage = await response.text()
+      console.error(`[error] failed to fetch user competitions: ${errorMessage}`);
+      return;
     }
+    const data = await response.json();
+    return data;
 
   } catch (error) {
-    console.error(`[error] failed to fetch user competitions: ${error}`)
-    return undefined;
+    console.error(`[error]: ${error}`)
+    return;
   }
 };
 
@@ -51,22 +58,25 @@ export async function createCompetition(competitionFormData: ICompetition) {
   try {
     const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/competition/`, {
       method: 'POST',
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
+      },
       body: JSON.stringify(competitionFormData),
     });
 
-    if (response.ok) {
-      if (process.env.DEBUG) {
-        console.log(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
-      }
-      return true;
-    } else {
-      console.error(`[error] failed to create competition; response not ok`);
-      return false;
+    if (!response.ok) {
+      const errorMessage = await response.text()
+      console.error(`[error] failed to create competition: ${errorMessage}`);
+      return false
     }
+    if (process.env.DEBUG) {
+      console.debug(`[debug] created competition: ${JSON.stringify(competitionFormData)}`);
+    }
+    return true;
 
   } catch (error) {
-    console.error(`[error] failed to create competition: ${error}`);
+    console.error(`[error]: ${error}`);
     return false;
   }
 };
@@ -74,20 +84,24 @@ export async function createCompetition(competitionFormData: ICompetition) {
 
 export async function joinCompetition(competitionId: number) {
   // join a competition on the backend
-  const token = await AsyncStorage.getItem("userToken");
-
   try {
-    await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}/join/`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/competition/${competitionId}/join/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`,
+        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
     });
-    if (process.env.DEBUG) {
-      console.log(`[debug] joined competition: ${competitionId}`);
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.error(`[error] failed to join competition ${errorMessage}`);
     }
+    if (process.env.DEBUG) {
+      console.debug(`[debug] joined competition: ${competitionId}`);
+    }
+
   } catch (error) {
-    console.error(`[error] failed to join competition: ${error}`);
+    console.error(`[error]: ${error}`);
   }
 };

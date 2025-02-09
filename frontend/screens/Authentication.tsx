@@ -18,6 +18,8 @@ const AuthenticationScreen = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showLoginError, setShowLoginError] = useState(false);
+  const [showRegisterError, setShowRegisterError] = useState(false);
 
   const isValidEmail = (email: string) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -46,6 +48,7 @@ const AuthenticationScreen = () => {
       if (loggedIn) {
         setIsAuthenticated(true);
       } else {
+        setShowLoginError(true);
         Alert.alert("Error", "Invalid email or password");
       }
     } else {
@@ -53,6 +56,7 @@ const AuthenticationScreen = () => {
       if (user) {
         setIsAuthenticated(true);
       } else {
+        setShowRegisterError(true);
         Alert.alert("Error", "Failed to register user");
       }
     }
@@ -105,6 +109,18 @@ const AuthenticationScreen = () => {
             {isLogin ? "Login" : "Register"}
           </Text>
         </TouchableOpacity>
+      )}
+
+      {showLoginError&& (
+        <Text style={{ color: "#ff6b6b", padding: 10, fontWeight: "bold", textAlign: "center" }}>
+          Unable to find user- make sure you've entered the right username and password, or register a new account
+        </Text>
+      )}
+
+      {showRegisterError&& (
+        <Text style={{ color: "#ff6b6b", padding: 10, fontWeight: "bold", textAlign: "center" }}>
+          This username is already registered- try logging in or using a new username
+        </Text>
       )}
 
       <TouchableOpacity
