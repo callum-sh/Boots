@@ -1,3 +1,4 @@
+import React from 'react';
 import { IParticipant } from "@/types/participant";
 import { View, Text } from "../Themed";
 import { StyleSheet } from "react-native";
@@ -5,7 +6,7 @@ import { StyleSheet } from "react-native";
 
 export function ParticipantLeaderboard({ participants }: { participants: IParticipant[] }) {
   return (
-    <View style={styles.detailContainer}>     
+    <View style={styles.detailContainer}>    
         <Text style={styles.title}>Leaderboard</Text>
         <View style={styles.titleSeparator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
@@ -13,7 +14,7 @@ export function ParticipantLeaderboard({ participants }: { participants: IPartic
             .sort((a, b) => b.score - a.score)
             .map((participant, index) => (
             <View key={participant.id}>
-                <Text>{index + 1}. {participant.user_name} - {participant.score}</Text>
+                <Text>{index + 1}. {participant.username} - {participant.score}</Text>
             </View>
             ))}
     </View>

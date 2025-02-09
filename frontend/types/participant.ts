@@ -1,5 +1,6 @@
 export interface IParticipant {
   id: number;
-  user_name: string;
+  username: string;
   score: number;
+  competition: number;
 }

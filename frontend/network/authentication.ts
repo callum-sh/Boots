@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { IAuthResponse, IUser } from "@/types/authentication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchWrapper } from "./fetchWrapper";
 
 // Register a new user
 export async function registerUser(
@@ -75,32 +76,25 @@ export async function loginUser(
 
 // Fetch the currently authenticated user
 export async function fetchAuthenticatedUser(): Promise<IUser | undefined> {
-  const token = await AsyncStorage.getItem("userToken");
+  try {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/auth/user/`, {
+      method: "GET",
+      headers: {"Content-Type": "application/json" },
+    })
 
-  // try {
-  //   const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/user/`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Token ${token}`,
-  //     },
-  //   });
+    if (response.ok) {
+      const data: IUser = await response.json();
+      return data;
+    } else {
+      console.error(`[error] failed to fetch authenticated user; response not ok`);
+      return undefined;
+    }
 
-  //   const data: IUser = await response.json();
-
-  //   if (process.env.DEBUG) {
-  //     console.log(`[DEBUG] Authenticated user: ${JSON.stringify(data)}`);
-  //   }
-
-  //   return data;
-  // } catch (error) {
-  //   console.error(`[error] failed to fetch authenticated user: ${error}`);
-  //   return undefined;
-  // }
-
-  return undefined;
+  } catch (error) {
+    console.error(`[error] failed to fetch authenticated user: ${error}`);
+    return undefined;
+  }
 }
-
 // Log out the user
 export async function logoutUser(): Promise<boolean> {
   try {

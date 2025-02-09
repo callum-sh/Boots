@@ -8,12 +8,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ParticipantSerializer(serializers.ModelSerializer):
-    user_name = serializers.ReadOnlyField(source='user.first_name')
+    username = serializers.ReadOnlyField(source='user.username')
+    competition = serializers.PrimaryKeyRelatedField(queryset=Competition.objects.all(), required=False)
     class Meta:
         model = Participant
         fields = '__all__'
 
 class GoalSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    participant = ParticipantSerializer(read_only=True)
     class Meta:
         model = Goal
         fields = '__all__'

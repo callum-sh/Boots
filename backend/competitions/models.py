@@ -44,6 +44,18 @@ class Participant(models.Model):
     def __str__(self):
         return f"{self.user.username}"
     
+    def create_todays_goals(self):
+        """
+        Create daily goals for each category in current competition (if not existing).
+        """
+        today = timezone.now().date()
+        
+        for category in self.competition.categories.all():
+            goal_exists = Goal.objects.filter(participant=self, category=category, date=today).exists()
+            
+            if not goal_exists:
+                Goal.objects.create(participant=self, category=category, description="todo", date=today)
+    
     
 class Goal(models.Model):
     """
@@ -55,7 +67,7 @@ class Goal(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='goals')
     description = models.CharField(max_length=255)
     achieved = models.BooleanField(default=False)
-    achieved_at = models.DateTimeField(null=True, blank=True)
+    date = models.DateField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.description} [{self.category.category.name}]"
+        return f"{self.description} [{self.category.name}]"

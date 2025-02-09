@@ -14,4 +14,5 @@ urlpatterns = router.urls
 # add custom function urls 
 urlpatterns += [
     path('competition/<int:pk>/join/', join_competition),
+    path('<int:pk>/goal/', fetch_daily_goals),
 ]

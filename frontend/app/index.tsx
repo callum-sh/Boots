@@ -10,14 +10,22 @@ import { fetchUserCompetitions } from "@/network/competition";
 import { CompetitionCreationModal } from "@/components/competitionCreation/CompetitionCreationModal";
 import { Colors } from "@/constants/Colors";
 import { IconButton } from "@/components/IconButton";
+import { IUser } from "@/types/authentication";
+import { fetchAuthenticatedUser } from "@/network/authentication";
 
 export default function HomeScreen() {
   const [competitions, setCompetitions] = useState<ICompetition[]>([]);
+  const [user, setUser] = useState<IUser | null>(null);
   const theme = useColorScheme() === 'light' ? Colors.light : Colors.dark;
 
   // fetch data needed to render page
   useEffect(() => {
     const fetchData = async () => {
+      const user = await fetchAuthenticatedUser();
+      if (user) {
+        setUser(user);
+      }
+
       const data = await fetchUserCompetitions();
       if (data) {
         setCompetitions(data);
@@ -29,10 +37,18 @@ export default function HomeScreen() {
 
   const handlePress = (competition: ICompetition) => {
     // Navigate to the details screen and pass competition data as params
-    router.push(`/competition/${competition.id}`);
+    // get participant id from the competition
+    const participant = competition.participants.find(
+      (participant) => participant.username == user?.username
+    );
+    if (!participant) {
+      console.error("Participant not found");
+      return;
+    }
+    router.push(`/goals/${participant.id}`);
   };
 
-  const renderCompetitionItem = (competition: ICompetition) => {
+  const  renderCompetitionItem = (competition: ICompetition) => {
     const progress = calculateProgress(
       competition.start_date,
       competition.end_date

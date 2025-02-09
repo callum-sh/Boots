@@ -145,11 +145,23 @@ class GoalViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def update(self, request, pk=None):
+        add_pts = False
         instance = self.queryset.get(pk=pk)
         data = request.data
+        
+        # check if goal newly achieved 
+        if data.get('achieved') and not instance.achieved:
+            add_pts = True
+
         serializer = self.serializer_class(instance, data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        if add_pts:
+            participant = Participant.objects.get(user=request.user)
+            participant.score += 1
+            participant.save()
+
         return Response(serializer.data)
 
 
@@ -163,3 +175,14 @@ def join_competition(request, pk):
         return Response({"error": "Participant creation error"}, status=400)
 
     return Response({"message": f"Successfully joined {competition.name}"}, status=200)
+
+
+@api_view(['GET'])
+def fetch_daily_goals(request, pk):
+    today = timezone.now().date()
+    competition = Competition.objects.get(pk=pk)
+    participant = Participant.objects.get(user=request.user, competition=competition)
+    goals = Goal.objects.filter(participant=participant, date=today)
+    serialized = GoalSerializer(goals, many=True)
+
+    return Response(serialized.data)

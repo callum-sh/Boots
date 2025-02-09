@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, useThemeColor } from "./Themed";
 import EvilIcons from '@expo/vector-icons/EvilIcons';
@@ -35,4 +36,4 @@ const styles = StyleSheet.create({
         margin: 10,
         borderRadius: 5,
     },
-  });
+});
