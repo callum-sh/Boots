@@ -1,12 +1,15 @@
+import { IconButton } from '@/components/IconButton';
+import { useAuth } from '@/context/AuthContext';
 import { fetchAuthenticatedUser, logoutUser } from '@/network/authentication';
 import { IUser } from '@/types/authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<IUser | undefined>(undefined);
+  const { setIsAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,22 +23,39 @@ export default function ProfileScreen() {
     fetchData();
   }, []);
 
-  const handleSignOut = async () => {
-    const token = await AsyncStorage.getItem('token');
-    if (!token) {
-      console.error('No token found in storage');
-      return;
-    }
+  const handleLogout = async () => {
+    setIsAuthenticated(false);
+    router.replace("/")
 
-    logoutUser(token);
+    const loggedOut = await logoutUser();
+    if (!loggedOut) {
+      Alert.alert("Error", "Failed to logout user");
+    }
   };
+
+  const handleHome = () => {
+      router.replace("/");
+    };
 
   return (
     <>
     <Stack.Screen
       name="User Profile"
       options={{
-        title: user ? user.username : 'Profile',
+        headerTitle: user ? user.username : 'Profile',
+        headerTitleAlign: 'center',
+        headerLeft: () => (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <IconButton
+            iconName="arrow-left"
+            color={"#ff6b6b"}
+            iconSize={28}
+            onPress={handleHome}
+            style={{ marginLeft: 15 }}
+          />
+          <Text style={{ color: "#ff6b6b", fontSize: 13, marginLeft: 5 }}>Home</Text>
+          </View>
+        ),
       }}
     />
 
@@ -48,7 +68,7 @@ export default function ProfileScreen() {
 
         {/* TODO: would be nice to add lots of metrics about wins, etc. */}
 
-        <Button title="Sign Out" onPress={handleSignOut} />
+        <Button title="Sign Out" onPress={handleLogout} />
       </View>
     {/* ) : (
       <View style={styles.container}>
