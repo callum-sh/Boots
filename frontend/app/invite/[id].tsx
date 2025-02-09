@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ICompetition } from '@/types/competition';
 import { fetchCompetitionDetails, joinCompetition } from '@/network/competition';
 import { Text, View } from '@/components/Themed';

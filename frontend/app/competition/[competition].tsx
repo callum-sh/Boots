@@ -3,7 +3,7 @@ import { StyleSheet, Share, useColorScheme } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { Colors } from '@/constants/Colors';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ICompetition } from '@/types/competition';
 import { calculateProgress, formatDate } from '@/utils/date';
 import { fetchCompetitionDetails } from '@/network/competition';

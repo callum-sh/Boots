@@ -1,6 +1,5 @@
 import { fetchAuthenticatedUser, logoutUser } from '@/network/authentication';
 import { IUser } from '@/types/authentication';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
@@ -21,13 +20,7 @@ export default function ProfileScreen() {
   }, []);
 
   const handleSignOut = async () => {
-    const token = await AsyncStorage.getItem('token');
-    if (!token) {
-      console.error('No token found in storage');
-      return;
-    }
-
-    logoutUser(token);
+    logoutUser();
   };
 
   return (
@@ -40,21 +33,10 @@ export default function ProfileScreen() {
     />
 
     {/* rendering user info */}
-    {/* {user ? ( */}
       <View style={styles.container}>
         <Text style={styles.title}>User Profile</Text>
-        {/* <Text>Name: {user.username}</Text>
-        <Text>Email: {user.email}</Text> */}
-
-        {/* TODO: would be nice to add lots of metrics about wins, etc. */}
-
         <Button title="Sign Out" onPress={handleSignOut} />
       </View>
-    {/* ) : (
-      <View style={styles.container}>
-        <Text style={styles.title}>Loading...</Text>
-      </View>
-    )} */}
     </>
   );
 }
