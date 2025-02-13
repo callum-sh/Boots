@@ -14,7 +14,6 @@ export async function registerUser(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
       body: JSON.stringify({ email, username, password }),
     });
@@ -52,7 +51,6 @@ export async function loginUser(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
       body: JSON.stringify({ username,  password }),
     });
@@ -87,7 +85,6 @@ export async function fetchAuthenticatedUser(): Promise<IUser | undefined> {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
     });
 
@@ -116,7 +113,6 @@ export async function logoutUser(): Promise<boolean> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
       body: JSON.stringify({ refresh_token: refresh }),
     });

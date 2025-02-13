@@ -9,7 +9,6 @@ export async function fetchCategories(): Promise<ICategory[]> {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       }
     });
 
@@ -34,7 +33,6 @@ export async function createCategory(category: ICategory) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
       body: JSON.stringify(category),
     });

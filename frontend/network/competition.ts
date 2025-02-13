@@ -9,7 +9,6 @@ export async function fetchCompetitionDetails(competitionId: number): Promise<IC
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       }
     });
 
@@ -34,7 +33,6 @@ export async function fetchUserCompetitions() {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       }
     });
 
@@ -60,7 +58,6 @@ export async function createCompetition(competitionFormData: ICompetition) {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
       body: JSON.stringify(competitionFormData),
     });
@@ -89,7 +86,6 @@ export async function joinCompetition(competitionId: number) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
     });
 

@@ -32,9 +32,9 @@ class CurrentUserView(APIView):
         Fetch current user
 
         """
-        queryset = User.objects.filter(username=request.username)
-        serializer = UserSerializer(queryset, many = False)
-        return Response({serializer.data})
+        user = request.user
+        serializer = UserSerializer(user, many = False)
+        return Response(serializer.data)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
