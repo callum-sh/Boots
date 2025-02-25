@@ -1,13 +1,14 @@
-import { IconButton } from '@/components/IconButton';
 import { useAuth } from '@/context/AuthContext';
+import { useURL } from "expo-linking";
 import { fetchAuthenticatedUser, logoutUser } from '@/network/authentication';
 import { IUser } from '@/types/authentication';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text } from "@/components/Themed";
+import { Button, StyleSheet, Alert } from 'react-native';
 
 export default function ProfileScreen() {
+
   const [user, setUser] = useState<IUser | undefined>(undefined);
   const { setIsAuthenticated } = useAuth();
 

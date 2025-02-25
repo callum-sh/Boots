@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import { Modal, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 
 import { ICompetition } from '@/types/competition';
 import { IconButton } from '../IconButton';
@@ -23,7 +24,9 @@ export function CompetitionCreationModal() {
     categories: [],
     participants: [],
   };
-    
+  
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [isCompetitionModalVisible, setIsCompetitionModalVisible] = useState(false);
   const [competitionFormData, setCompetitionFormData] = useState<ICompetition>(clearedFormData);
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -46,6 +49,13 @@ export function CompetitionCreationModal() {
     }));
   };
 
+  const onDateChange = (key: 'start_date' | 'end_date', event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (selectedDate) {
+      key === 'start_date' ? setStartDate(selectedDate) : setEndDate(selectedDate);
+      handleChange(key, selectedDate.toLocaleDateString());
+    }
+  };
+  
   const handleCloseCreateCompetitionModal = () => {
     // close modal and clear form data
     setIsCompetitionModalVisible(false);
@@ -90,18 +100,19 @@ export function CompetitionCreationModal() {
                   />
 
                   <Text>Start Date</Text>
-                  <TextInput
-                    style={[styles.textInput, {color: theme.tint}]}
-                    value={competitionFormData.start_date}
-                    onChangeText={value => handleChange('start_date', value)}
+                  <DateTimePicker
+                    value={startDate}
+                    mode={"date"}
+                    onChange={(e, d) => onDateChange('start_date', e, d)}
                   />
 
                   <Text>End Date</Text>
-                  <TextInput
-                    style={[styles.textInput, {color: theme.tint}]}
-                    value={competitionFormData.end_date}
-                    onChangeText={value => handleChange('end_date', value)}
+                  <DateTimePicker
+                    value={endDate}
+                    mode={"date"}
+                    onChange={(e, d) => onDateChange('end_date', e, d)}
                   />
+
                   {/* category selection */}
                   <CategorySelectionModal handleChange={handleChange} categories={categories} />
 
