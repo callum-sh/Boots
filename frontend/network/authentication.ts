@@ -1,6 +1,7 @@
-import { useAuth } from "@/context/AuthContext";
-import { IAuthResponse, IUser } from "@/types/authentication";
+import { IUser } from "@/types/authentication";
+import { fetchWrapper } from "./fetchWrapper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 // Register a new user
 export async function registerUser(
@@ -105,7 +106,7 @@ export async function fetchAuthenticatedUser(): Promise<IUser | undefined> {
 export async function logoutUser(): Promise<boolean> {
   try {
     const refresh = await AsyncStorage.getItem('refresh_token');
-    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/logout/`, {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/auth/logout/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -118,10 +119,7 @@ export async function logoutUser(): Promise<boolean> {
     await AsyncStorage.removeItem('refresh_token');
 
     if (response.ok) {
-      if (process.env.DEBUG) {
-        console.log("[DEBUG] User logged out successfully");
-        return true;
-      }
+      console.log("User logged out successfully");
     } else {
       console.error(`[error] failed to log out: ${response.statusText}`);
       return false;
