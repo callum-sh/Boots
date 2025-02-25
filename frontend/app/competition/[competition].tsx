@@ -1,4 +1,5 @@
 import { StyleSheet, Share, useColorScheme } from 'react-native';
+import React from 'react';
 
 import { Text, View } from '@/components/Themed';
 import { Colors } from '@/constants/Colors';
@@ -35,7 +36,7 @@ export default function CompetitionDetails() {
     try {
       await Share.share({
         message: `Join my boots competition: ${competitionDetails?.name}!`,
-        url: `boots://invite/${competitionDetails?.id}`,
+        url: `Boots://invite/${competitionDetails?.id}`,
       })
     } catch (error) {
       console.error('Error sharing:', error);

@@ -155,7 +155,7 @@ class GoalViewSet(viewsets.ViewSet):
 
 @api_view(["PUT"])
 def join_competition(request, pk):
-    print(request.user)
+    print("*******", request.user)
     competition = Competition.objects.get(pk=pk)
     participant = Participant.objects.create(user=request.user, competition=competition)
 
