@@ -13,8 +13,8 @@ export async function fetchCategories(): Promise<ICategory[]> {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to fetch user categories: ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to fetch user categories: ${err}`);
       return []; 
     }
     const data = await response.json();
@@ -38,8 +38,8 @@ export async function createCategory(category: ICategory) {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to create new category: ${errorMessage}`)
+      const err = await response.text();
+      console.error(`[error] failed to create new category: ${err}`);
       return
     }
     const data: ICategory = await response.json();

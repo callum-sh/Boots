@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { StyleSheet, TouchableOpacity, useColorScheme, ScrollView, Image, Alert} from "react-native";
+import { StyleSheet, TouchableOpacity, useColorScheme, ScrollView } from "react-native";
 import { router, Stack } from "expo-router";
 
 import { ICompetition } from "@/types/competition";

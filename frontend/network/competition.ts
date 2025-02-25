@@ -13,8 +13,8 @@ export async function fetchCompetitionDetails(competitionId: number): Promise<IC
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to fetch competition details: ${errorMessage}`)
+      const err = await response.text();
+      console.error(`[error] failed to fetch competition details: ${err}`)
     }
     const data = await response.json();
     return data;
@@ -37,8 +37,8 @@ export async function fetchUserCompetitions() {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to fetch user competitions: ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to fetch user competitions: ${err}`);
       return;
     }
     const data = await response.json();
@@ -61,8 +61,8 @@ export async function fetchUserInvites() {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to fetch user invites: ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to fetch user invites: ${err}`);
       return;
     }
     const data = await response.json();
@@ -86,8 +86,8 @@ export async function createCompetition(competitionFormData: ICompetition) {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to create competition: ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to create competition: ${err}`);
       return false
     }
     if (process.env.DEBUG) {
@@ -113,8 +113,8 @@ export async function joinCompetition(competitionId: number) {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text();
-      console.error(`[error] failed to join competition ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to join competition ${err}`);
     }
     if (process.env.DEBUG) {
       console.debug(`[debug] joined competition: ${competitionId}`);

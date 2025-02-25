@@ -19,8 +19,8 @@ export async function registerUser(
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to register user: ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to register user: ${err}`);
       return false;
     }
 
@@ -55,14 +55,13 @@ export async function loginUser(
       body: JSON.stringify({ username,  password }),
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to log in: ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to log in: ${err}`);
       return false;
     }
 
+    const data = await response.json()
     await AsyncStorage.clear();
     await AsyncStorage.setItem('access_token', data?.access);
     await AsyncStorage.setItem('refresh_token', data?.refresh);
@@ -89,8 +88,8 @@ export async function fetchAuthenticatedUser(): Promise<IUser | undefined> {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to fetch user: ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to fetch user: ${err}`);
       return;
     }
     const data: IUser = await response.json();
@@ -121,8 +120,8 @@ export async function logoutUser(): Promise<boolean> {
     await AsyncStorage.removeItem('refresh_token');
 
     if (!response.ok) {
-      const errorMessage = await response.text()
-      console.error(`[error] failed to log out: ${errorMessage}`);
+      const err = await response.text();
+      console.error(`[error] failed to log out: ${err}`);
       return false;
     }
     if (process.env.DEBUG) {
