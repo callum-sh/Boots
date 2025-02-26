@@ -40,7 +40,7 @@ export async function createCategory(category: ICategory) {
     if (!response.ok) {
       const err = await response.text();
       console.error(`[error] failed to create new category: ${err}`);
-      return
+      return;
     }
     const data: ICategory = await response.json();
     if (process.env.DEBUG) {
