@@ -1,14 +1,11 @@
 import { useAuth } from '@/context/AuthContext';
-import { useURL } from "expo-linking";
 import { fetchAuthenticatedUser, logoutUser } from '@/network/authentication';
 import { IUser } from '@/types/authentication';
 import { router, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text } from "@/components/Themed";
-import { Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 
 export default function ProfileScreen() {
-
   const [user, setUser] = useState<IUser | undefined>(undefined);
   const { setIsAuthenticated } = useAuth();
 
@@ -23,10 +20,10 @@ export default function ProfileScreen() {
 
     fetchData();
   }, []);
-
+  
   const handleLogout = async () => {
     setIsAuthenticated(false);
-    router.push("/")
+    router.push(`/`)
 
     const loggedOut = await logoutUser();
     if (!loggedOut) {
@@ -47,8 +44,8 @@ export default function ProfileScreen() {
     {/* {user ? ( */}
       <View style={styles.container}>
         <Text style={styles.title}>User Profile</Text>
-        {/* <Text>Name: {user.username}</Text>
-        <Text>Email: {user.email}</Text> */}
+        <Text>Name: {user?.username}</Text>
+        <Text>Email: {user?.email}</Text>
 
         {/* TODO: would be nice to add lots of metrics about wins, etc. */}
 

@@ -1,6 +1,5 @@
 import { StyleSheet, Share, useColorScheme } from 'react-native';
 import React from 'react';
-
 import { Text, View } from '@/components/Themed';
 import { Colors } from '@/constants/Colors';
 import { Stack, useLocalSearchParams } from 'expo-router';
@@ -36,7 +35,9 @@ export default function CompetitionDetails() {
     try {
       await Share.share({
         message: `Join my boots competition: ${competitionDetails?.name}!`,
-        url: `Boots://invite/${competitionDetails?.id}`,
+        // this link is specifically for expo-go dev
+        url: `exp://10.0.0.4:8081/--/invite/${competitionDetails?.id}`,
+        // url: `Boots://invite/${competitionDetails?.id}`,
       })
     } catch (error) {
       console.error('Error sharing:', error);

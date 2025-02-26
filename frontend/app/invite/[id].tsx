@@ -4,7 +4,7 @@ import { ICompetition } from '@/types/competition';
 import { fetchCompetitionDetails, joinCompetition } from '@/network/competition';
 import { Text, View } from '@/components/Themed';
 import { IconButton } from '@/components/IconButton';
-import { StyleSheet, useColorScheme } from 'react-native';
+import { Alert, StyleSheet, useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import React from 'react';
 
@@ -30,8 +30,10 @@ export default function InviteScreen() {
     try {
       const join = await joinCompetition(competitionDetails.id);
       if (join) {
-        router.replace(`/`)
-        router.push(`/competition/${competitionDetails.id}`);
+        router.replace(`/competition/${competitionDetails.id}`);
+      } else {
+        Alert.alert("Warning", "You've already joined this competition");
+        router.replace(`/`);
       }
     } catch (error) {
       console.error("Error joining competition:", error);
