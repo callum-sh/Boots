@@ -1,8 +1,6 @@
-import { IconButton } from '@/components/IconButton';
 import { useAuth } from '@/context/AuthContext';
 import { fetchAuthenticatedUser, logoutUser } from '@/network/authentication';
 import { IUser } from '@/types/authentication';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
@@ -22,10 +20,10 @@ export default function ProfileScreen() {
 
     fetchData();
   }, []);
-
+  
   const handleLogout = async () => {
     setIsAuthenticated(false);
-    router.push("/")
+    router.push(`/`)
 
     const loggedOut = await logoutUser();
     if (!loggedOut) {
@@ -46,8 +44,8 @@ export default function ProfileScreen() {
     {/* {user ? ( */}
       <View style={styles.container}>
         <Text style={styles.title}>User Profile</Text>
-        {/* <Text>Name: {user.username}</Text>
-        <Text>Email: {user.email}</Text> */}
+        <Text>Name: {user?.username}</Text>
+        <Text>Email: {user?.email}</Text>
 
         {/* TODO: would be nice to add lots of metrics about wins, etc. */}
 

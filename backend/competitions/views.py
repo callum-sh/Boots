@@ -1,6 +1,5 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
 from competitions.models import *
@@ -155,8 +154,11 @@ class GoalViewSet(viewsets.ViewSet):
 
 @api_view(["PUT"])
 def join_competition(request, pk):
-    print(request.user)
     competition = Competition.objects.get(pk=pk)
+
+    if Participant.objects.filter(user=request.user, competition=competition).exists():
+        return Response({"error": "Repeat participation request"}, status=400)
+    
     participant = Participant.objects.create(user=request.user, competition=competition)
 
     if not participant:

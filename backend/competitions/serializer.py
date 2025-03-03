@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ParticipantSerializer(serializers.ModelSerializer):
-    user_name = serializers.ReadOnlyField(source='user.first_name')
+    user_name = serializers.ReadOnlyField(source='user.username')
     class Meta:
         model = Participant
         fields = '__all__'
