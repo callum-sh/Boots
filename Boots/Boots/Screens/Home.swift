@@ -16,17 +16,17 @@ struct Home: View {
             Color(.systemBackground)
                 .ignoresSafeArea()
 
-            GeometryReader { geometry in
-                Image(systemName: "figure.hiking")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 600, height: 600)
-                    .foregroundColor(Color.blue.opacity(0.4))
-                    .blur(radius: 30)
-                    .scaleEffect(x: -1, y: 1)
-                    .position(x: geometry.size.width * 0.8, y: geometry.size.height * 0.5)
-            }
-            .ignoresSafeArea()
+            // GeometryReader { geometry in
+            //     Image(systemName: "figure.hiking")
+            //         .resizable()
+            //         .aspectRatio(contentMode: .fit)
+            //         .frame(width: 600, height: 600)
+            //         .foregroundColor(Color.blue.opacity(0.4))
+            //         .blur(radius: 30)
+            //         .scaleEffect(x: -1, y: 1)
+            //         .position(x: geometry.size.width * 0.8, y: geometry.size.height * 0.5)
+            // }
+            // .ignoresSafeArea()
             
             VStack(spacing: 24) {
                 HStack {

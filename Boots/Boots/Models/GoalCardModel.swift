@@ -13,9 +13,9 @@ class GoalCardModel: Identifiable, Codable {
     let competition: String
     let description: String?
     let icon: String
-    let isCompleted: Bool
+    let isCompleted: Bool?
     
-    init(id: Int, title: String, competition: String, description: String? = nil, icon: String, isCompleted: Bool = false) {
+    init(id: Int, title: String, competition: String, description: String? = nil, icon: String, isCompleted: Bool? = nil) {
         self.id = id
         self.title = title
         self.competition = competition
