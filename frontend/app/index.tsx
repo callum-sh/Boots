@@ -55,7 +55,7 @@ export default function HomeScreen() {
   };
 
   const handleProfile = () => {
-    router.push("/profile");
+    router.push(`/profile`);
   }; 
 
   return (
@@ -86,7 +86,7 @@ export default function HomeScreen() {
         ) : (
           <Text style={styles.title}>😔 No competitions</Text>
         )}
-        <CompetitionCreationModal />
+        <CompetitionCreationModal/>
       </View>
     </ScrollView>
     </>

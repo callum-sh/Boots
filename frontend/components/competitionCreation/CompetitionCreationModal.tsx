@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Modal, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 
 import { ICompetition } from '@/types/competition';
 import { IconButton } from '../IconButton';
@@ -9,21 +10,30 @@ import { Text, View, RowView} from '../Themed';
 import { CategorySelectionModal } from './CategorySelectionModal';
 import { fetchCategories } from '@/network/category';
 import { ICategory } from '@/types/category';
+import React = require('react');
 
 export function CompetitionCreationModal() {
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'light' ? Colors.light : Colors.dark;
 
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(() => {
+    const defaultEnd= new Date();
+    defaultEnd.setDate(defaultEnd.getDate() + 28);
+    return defaultEnd;
+  });
+  const [validDates, setValidDates] = useState(true);
+
   const clearedFormData: ICompetition = {
     id: 0,
     name: '',
     description: '',
-    start_date: '',
-    end_date: '',
+    start_date: startDate.toLocaleDateString(),
+    end_date: endDate.toLocaleDateString(),
     categories: [],
     participants: [],
   };
-    
+  
   const [isCompetitionModalVisible, setIsCompetitionModalVisible] = useState(false);
   const [competitionFormData, setCompetitionFormData] = useState<ICompetition>(clearedFormData);
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -46,6 +56,30 @@ export function CompetitionCreationModal() {
     }));
   };
 
+  const onStartDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (selectedDate) {
+      setStartDate(selectedDate);
+      if (selectedDate >= endDate) {
+        setValidDates(false)
+      } else {
+        setValidDates(true)
+        handleChange("start_date", selectedDate.toLocaleDateString());
+      }
+    }
+  };
+
+  const onEndDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (selectedDate) {
+      setEndDate(selectedDate);
+      if (startDate >= selectedDate) {
+        setValidDates(false)
+      } else {
+        setValidDates(true)
+        handleChange("end_date", selectedDate.toLocaleDateString());
+      }
+    }
+  };
+  
   const handleCloseCreateCompetitionModal = () => {
     // close modal and clear form data
     setIsCompetitionModalVisible(false);
@@ -90,18 +124,20 @@ export function CompetitionCreationModal() {
                   />
 
                   <Text>Start Date</Text>
-                  <TextInput
-                    style={[styles.textInput, {color: theme.tint}]}
-                    value={competitionFormData.start_date}
-                    onChangeText={value => handleChange('start_date', value)}
+                  <DateTimePicker
+                    value={startDate}
+                    mode={"date"}
+                    onChange={onStartDateChange}
                   />
 
                   <Text>End Date</Text>
-                  <TextInput
-                    style={[styles.textInput, {color: theme.tint}]}
-                    value={competitionFormData.end_date}
-                    onChangeText={value => handleChange('end_date', value)}
+                  <DateTimePicker
+                    value={endDate}
+                    mode={"date"}
+                    onChange={onEndDateChange}
                   />
+                  {!validDates && <Text style={styles.errorText}>End date must be after the start date</Text>}
+
                   {/* category selection */}
                   <CategorySelectionModal handleChange={handleChange} categories={categories} />
 
@@ -117,10 +153,11 @@ export function CompetitionCreationModal() {
                     />
                     <IconButton
                       iconName="plus"
-                      color={theme.tint}
+                      color={validDates ? theme.tint : "#808080"}
                       iconSize={32}
-                      onPress={handleCreateCompetition}
+                      onPress={validDates ? handleCreateCompetition : undefined}
                       content="create"
+                      disabled={!validDates}
                     />
                   </RowView>
               </View>
@@ -176,5 +213,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 8,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 4,
   },
 });

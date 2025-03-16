@@ -17,23 +17,25 @@ export async function registerUser(
       },
       body: JSON.stringify({ email, username, password }),
     });
-    const data = await response.json();
 
-    if (data?.access && data?.refresh) {
-      await AsyncStorage.clear();
-      await AsyncStorage.setItem('access_token', data?.access);
-      await AsyncStorage.setItem('refresh_token', data?.refresh);
-    } else {
-      console.error(`[error] failed to register user: ${data}`);
+    if (!response.ok) {
+      const err = await response.text();
+      console.error(`[error] failed to register user: ${err}`);
       return false;
     }
 
-    console.log("RESPONSE:", data);
-    console.log("storage keys:", await AsyncStorage.getItem('access_token'), await AsyncStorage.getItem('refresh_token'));
+    const data = await response.json();
+    await AsyncStorage.clear();
+    await AsyncStorage.setItem('access_token', data?.access);
+    await AsyncStorage.setItem('refresh_token', data?.refresh);
+
+    if (process.env.DEBUG) {
+      console.debug("[debug] successfully registered new use");
+    }
     return true;
 
   } catch (error) {
-    console.error(`[error] failed to register user: ${error}`);
+    console.error(`[error]: ${error}`);
     return false
   }
 }
@@ -53,53 +55,53 @@ export async function loginUser(
       body: JSON.stringify({ username,  password }),
     });
 
-    const data = await response.json();
-
-    if (data?.access && data?.refresh) {
-      await AsyncStorage.clear();
-      await AsyncStorage.setItem('access_token', data?.access);
-      await AsyncStorage.setItem('refresh_token', data?.refresh);
-    } else {
-      console.error(`[error] failed to log in: ${data}`);
+    if (!response.ok) {
+      const err = await response.text();
+      console.error(`[error] failed to log in: ${err}`);
       return false;
     }
 
-    console.log("RESPONSE:", data);
-    console.log("storage keys:", await AsyncStorage.getItem('access_token'), await AsyncStorage.getItem('refresh_token'));
+    const data = await response.json()
+    await AsyncStorage.clear();
+    await AsyncStorage.setItem('access_token', data?.access);
+    await AsyncStorage.setItem('refresh_token', data?.refresh);
+
+    if (process.env.DEBUG) {
+      console.debug("[debug] successfully logged in");
+    }
     return true;
 
   } catch (error) {
-    console.error(`[error] failed to log in: ${error}`);
+    console.error(`[error]: ${error}`);
     return false;
   }
 }
 
 // Fetch the currently authenticated user
 export async function fetchAuthenticatedUser(): Promise<IUser | undefined> {
-  const token = await AsyncStorage.getItem("userToken");
+  try {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/auth/user/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  // try {
-  //   const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/user/`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Token ${token}`,
-  //     },
-  //   });
+    if (!response.ok) {
+      const err = await response.text();
+      console.error(`[error] failed to fetch user: ${err}`);
+      return;
+    }
+    const data: IUser = await response.json();
+    if (process.env.DEBUG) {
+      console.debug(`[debug] Authenticated user: ${JSON.stringify(data)}`);
+    }
+    return data;
 
-  //   const data: IUser = await response.json();
-
-  //   if (process.env.DEBUG) {
-  //     console.log(`[DEBUG] Authenticated user: ${JSON.stringify(data)}`);
-  //   }
-
-  //   return data;
-  // } catch (error) {
-  //   console.error(`[error] failed to fetch authenticated user: ${error}`);
-  //   return undefined;
-  // }
-
-  return undefined;
+  } catch (error) {
+    console.error(`[error]: ${error}`);
+    return;
+  }
 }
 
 // Log out the user
@@ -110,7 +112,6 @@ export async function logoutUser(): Promise<boolean> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AsyncStorage.getItem('access_token')}`,
       },
       body: JSON.stringify({ refresh_token: refresh }),
     });
@@ -118,16 +119,18 @@ export async function logoutUser(): Promise<boolean> {
     await AsyncStorage.removeItem('access_token');
     await AsyncStorage.removeItem('refresh_token');
 
-    if (response.ok) {
-      console.log("User logged out successfully");
-    } else {
-      console.error(`[error] failed to log out: ${response.statusText}`);
+    if (!response.ok) {
+      const err = await response.text();
+      console.error(`[error] failed to log out: ${err}`);
       return false;
     }
+    if (process.env.DEBUG) {
+      console.debug("[debug] User logged out successfully");
+    }
+    return true;
+
   } catch (error) {
-    console.error(`[error] failed to log out: ${error}`);
+    console.error(`[error]: ${error}`);
     return false;
   }
-
-  return false;
 }

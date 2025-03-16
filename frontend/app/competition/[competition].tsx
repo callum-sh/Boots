@@ -1,19 +1,20 @@
 import { StyleSheet, Share, useColorScheme } from 'react-native';
-
+import React from 'react';
 import { Text, View } from '@/components/Themed';
 import { Colors } from '@/constants/Colors';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ICompetition } from '@/types/competition';
 import { calculateProgress, formatDate } from '@/utils/date';
-import { fetchCompetitionDetails } from '@/network/competition';
+import { fetchCompetitionDetails, removeCompetition } from '@/network/competition';
 import { IconButton } from '@/components/IconButton';
 import { ParticipantLeaderboard } from '@/components/competitionDetails/ParticipantLeaderboard';
 import { CompetitionCategoryList } from '@/components/competitionDetails/CompetitionCategoryList';
 
 export default function CompetitionDetails() {
   const local = useLocalSearchParams();
-  const theme = useColorScheme() ?? 'light';
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === 'light' ? Colors.light : Colors.dark;  
   const [competitionDetails, setCompetitionDetails] = useState<ICompetition | undefined>(undefined);
   const [progress, setProgress] = useState<number>(0);
 
@@ -35,11 +36,22 @@ export default function CompetitionDetails() {
     try {
       await Share.share({
         message: `Join my boots competition: ${competitionDetails?.name}!`,
-        url: `boots://invite/${competitionDetails?.id}`,
+        // this link is specifically for expo-go dev
+        url: `exp://10.0.0.4:8081/--/invite/${competitionDetails?.id}`,
+        // url: `Boots://invite/${competitionDetails?.id}`,
       })
     } catch (error) {
       console.error('Error sharing:', error);
     }
+  };
+
+  // Handle deleting the competition
+  const handleDelete = async () => {
+    await removeCompetition(parseInt(local.competition as string));
+    while (router.canGoBack()) {
+      router.back();
+    }
+    router.replace(`/`);
   };
 
   return (
@@ -74,9 +86,16 @@ export default function CompetitionDetails() {
       <IconButton
         iconName="share-apple"
         content="Share"
-        color={theme === 'light' ? Colors.light.tint : Colors.dark.tint}
+        color={theme.tint}
         iconSize={32}
         onPress={handleShare}
+      />
+      <IconButton
+        iconName="trash"
+        content="Delete"
+        color={theme.warning}
+        iconSize={32}
+        onPress={handleDelete}
       />
     </View>
     </>

@@ -9,14 +9,13 @@ from django.contrib.auth.models import User
 
 class RegisterUserView(APIView):
     permission_classes = (AllowAny,)
-    serializer_class = UserSerializer
      
     def post(self, request):
         """
         Register new user
 
         """
-        serializer = self.serializer_class(data=request.data)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             if user:
@@ -24,6 +23,18 @@ class RegisterUserView(APIView):
                 access_token = str(refresh.access_token)
                 return Response({'access': access_token, 'refresh': str(refresh)}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class CurrentUserView(APIView):
+    permission_classes = (IsAuthenticated,)
+        
+    def get(self, request):
+        """
+        Fetch current user
+
+        """
+        user = request.user
+        serializer = UserSerializer(user, many = False)
+        return Response(serializer.data)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)

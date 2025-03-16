@@ -1,46 +1,58 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ICompetition } from '@/types/competition';
 import { fetchCompetitionDetails, joinCompetition } from '@/network/competition';
 import { Text, View } from '@/components/Themed';
 import { IconButton } from '@/components/IconButton';
-import { StyleSheet, useColorScheme } from 'react-native';
+import { Alert, StyleSheet, useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import React from 'react';
 
 export default function InviteScreen() {
-    const { id } = useLocalSearchParams();
-    const [competitionDetails, setCompetitionDetails] = useState<ICompetition | undefined>(undefined);
-    const colorScheme = useColorScheme();
-    const theme = colorScheme === 'light' ? Colors.light : Colors.dark;    
+  const { id } = useLocalSearchParams();
+  const [competitionDetails, setCompetitionDetails] = useState<ICompetition | undefined>(undefined);
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === 'light' ? Colors.light : Colors.dark;    
 
-    useEffect(() => {
-        // fetch competition details
-        const fetchData = async () => {
-          const data = await fetchCompetitionDetails(parseInt(id as string));
-          setCompetitionDetails(data);
-        };
-    
-        fetchData();
-    }, []);
-
-    const handleJoiningCompetition = async () => {
-        if (!competitionDetails) return;
-        joinCompetition(competitionDetails.id);
+  useEffect(() => {
+    // fetch competition details
+    const fetchData = async () => {
+      const data = await fetchCompetitionDetails(parseInt(id as string));
+      setCompetitionDetails(data);
     };
+
+    fetchData();
+  }, []);
+
+  const handleJoiningCompetition = async () => {
+    if (!competitionDetails) return;
+
+    try {
+      const join = await joinCompetition(competitionDetails.id);
+      if (join) {
+        router.replace(`/competition/${competitionDetails.id}`);
+      } else {
+        Alert.alert("Warning", "You've already joined this competition");
+        router.replace(`/`);
+      }
+    } catch (error) {
+      console.error("Error joining competition:", error);
+    }
+  };
 
   return (
     <>
     <Stack.Screen options={{ title: `${competitionDetails?.name} Invite` }} />
     
     <View style={styles.container}>
-        <Text style={styles.title}>🎉 You're invited to join {competitionDetails?.name}</Text>
-        <IconButton
-            iconName="check"
-            color={theme.tint}
-            iconSize={32}
-            onPress={handleJoiningCompetition}
-            content="Join Competition"
-        />  
+      <Text style={styles.title}>🎉 You're invited to join {competitionDetails?.name}</Text>
+      <IconButton
+        iconName="check"
+        color={theme.tint}
+        iconSize={32}
+        onPress={handleJoiningCompetition}
+        content="Join Competition"
+      />  
     </View>
     </>
   );

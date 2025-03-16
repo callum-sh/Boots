@@ -40,7 +40,7 @@ function AuthGate() {
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 15 }}
-              onPress={() => router.push("/profile")}
+              onPress={() => router.push(`/profile`)}
             >
               {/* Replace with actual user avatar if available */}
               <Image
