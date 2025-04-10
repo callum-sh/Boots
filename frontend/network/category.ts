@@ -26,18 +26,20 @@ export async function fetchCategories(): Promise<ICategory[]> {
 
 export async function createCategory(category: ICategory) {
   // create a new competition on the backend
-  const token = await AsyncStorage.getItem("userToken");
-
   try {
-    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/category/`, {
+    const response = await fetchWrapper(`${process.env.EXPO_PUBLIC_API_URL}/category/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
       },
       body: JSON.stringify(category),
     });
     const data: ICategory = await response.json();
+    if (!response.ok) {
+      const err = await response.text();
+      console.error(`[error] failed to create new category: ${err}`);
+      return;
+    }
     if (process.env.DEBUG) {
       console.log(`[debug] created category: ${JSON.stringify(data)}`);
     }

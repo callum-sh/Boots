@@ -5,6 +5,7 @@ import { Colors } from '@/constants/Colors';
 import { RowView, Text, View } from '../Themed';
 import { ICategory } from '@/types/category';
 import { ICompetition } from '@/types/competition';
+import { createCategory, fetchCategories } from '@/network/category';
 
 interface CategorySelectionModalProps {
   categories: ICategory[];
@@ -20,7 +21,7 @@ export function CategorySelectionModal({
   const [newCategory, setNewCategory] = useState<string>('');
   const [isPublic, setIsPublic] = useState<boolean>(false);
   const [publicCategories, setPublicCategories] = useState<ICategory[]>([]);
-  const [customCategories, setCustomCategories] = useState<ICategory[]>([]);
+  const [privateCategories, setPrivateCategories] = useState<ICategory[]>([]);
   const theme = useColorScheme() === 'light' ? Colors.light : Colors.dark;
 
   useEffect(() => {
@@ -29,8 +30,7 @@ export function CategorySelectionModal({
     // set default categories if there are categories to choose from
     console.log(`categories: ${categories}`);
     setPublicCategories(categories.filter((cat) => cat.public));
-
-    // TODO: pull private categories from user's profile 
+    setPrivateCategories(categories.filter((cat) => !cat.public));
   }, [categories]);
 
   const handleAddCategory = async () => {
@@ -42,17 +42,20 @@ export function CategorySelectionModal({
         description: '',
         public: isPublic,
       };
+      const newCat = await createCategory(newCategoryObj);
 
-      const updatedSelectedCategories = [...selectedCategories, newCategoryObj.id];
-      setSelectedCategories(updatedSelectedCategories);
-      {isPublic ? (
-        setPublicCategories([...publicCategories, newCategoryObj])
-      ) : (
-        setCustomCategories([...customCategories, newCategoryObj])
-      )}
-      handleChange('categories', updatedSelectedCategories);
-      setNewCategory('');
-      Keyboard.dismiss();
+      if (newCat) {
+        const updatedSelectedCategories = [...selectedCategories, newCat.id];
+        setSelectedCategories(updatedSelectedCategories);
+        {isPublic ? (
+          setPublicCategories([...publicCategories, newCat])
+        ) : (
+          setPrivateCategories([...privateCategories, newCat])
+        )}
+        handleChange('categories', updatedSelectedCategories);
+        setNewCategory('');
+        Keyboard.dismiss();
+      }
     }
   };
 
@@ -100,11 +103,11 @@ export function CategorySelectionModal({
       {/* Render custom categories */}
       <Text style={styles.subTitle}>Your Categories</Text>
       <View style={styles.categoryRow}>
-        {customCategories.length > 0 ? (
-          customCategories.map((category: ICategory) => renderCategory(category))
+        {privateCategories.length > 0 ? (
+          privateCategories.map((category: ICategory) => renderCategory(category))
         ) : (
           <Text style={{ color: theme.text, paddingBottom: 26 }}>
-            {"No previous custom categories to display"}
+            {"No previous private categories to display"}
           </Text>
         )}
       </View>
