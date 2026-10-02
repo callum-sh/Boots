@@ -1,0 +1,24 @@
+# fly launch --no-deploy --copy-config   (pick the app name and region there)
+app = "boots-api"
+primary_region = "yyz"
+
+[build]
+
+[env]
+  DJANGO_ALLOWED_HOSTS = "boots-api.fly.dev"
+  # what "today" means when someone checks in
+  BOOTS_TIMEZONE = "America/Toronto"
+
+[deploy]
+  release_command = "sh -c 'python manage.py migrate && python manage.py loaddata default_categories'"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

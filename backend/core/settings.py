@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     
     # apps
     "competitions",
+    "chat",
     
     # REST framework 
     "rest_framework",
@@ -183,3 +184,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 SWAGGER_SETTINGS = {"SECURITY_DEFINITIONS": {"Basic": {"type": "basic"}}}
+
+
+# iMessage agent (chat app)
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+BLUEBUBBLES_URL = os.getenv("BLUEBUBBLES_URL", "")
+BLUEBUBBLES_PASSWORD = os.getenv("BLUEBUBBLES_PASSWORD", "")
+# shared secret BlueBubbles sends as ?token= on the webhook URL
+BOOTS_WEBHOOK_TOKEN = os.getenv("BOOTS_WEBHOOK_TOKEN", "")
+# timezone the group lives in; decides what "today" means for an update
+BOOTS_TIMEZONE = os.getenv("BOOTS_TIMEZONE", "UTC")
+BOOTS_PARSER_MODEL = os.getenv("BOOTS_PARSER_MODEL", "claude-haiku-4-5")
+BOOTS_RECAP_MODEL = os.getenv("BOOTS_RECAP_MODEL", "claude-opus-5-5")

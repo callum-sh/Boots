@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ParticipantSerializer(serializers.ModelSerializer):
-    user_name = serializers.ReadOnlyField(source='user.first_name')
+    user_name = serializers.ReadOnlyField(source='name')
     class Meta:
         model = Participant
         fields = '__all__'
@@ -16,6 +16,11 @@ class ParticipantSerializer(serializers.ModelSerializer):
 class GoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goal
+        fields = '__all__'
+
+class GoalUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GoalUpdate
         fields = '__all__'
 
 class CompetitionSerializer(serializers.ModelSerializer):

@@ -35,6 +35,7 @@ urlpatterns = [
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema'),
     path('admin/', admin.site.urls),
     path('auth/', include('auth.urls')),
+    path('chat/', include('chat.urls')),
     path('', include('competitions.urls')),
     path('auth/login/', jwt_views.TokenObtainPairView.as_view(), name ='token_obtain_pair'),
     path('auth/refresh/', jwt_views.TokenRefreshView.as_view(), name ='token_refresh')
